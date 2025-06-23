@@ -86,7 +86,7 @@ to the colours of the flag of a Eurovision participant approximately every 10 se
 
 ## Building and Testing
 
-Compiling the application yourself requires Git and the [.NET SDK][dotnet-sdk] to be installed.
+Compiling the application yourself without Docker requires Git and the [.NET SDK][dotnet-sdk] to be installed.
 
 To build and test the application locally from a terminal/command-line, run the
 following set of commands:
