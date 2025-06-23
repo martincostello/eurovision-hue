@@ -2,15 +2,19 @@
 // Licensed under the Apache 2.0 license. See the LICENSE file in the project root for full license information.
 
 using System.Runtime.CompilerServices;
+using Microsoft.Extensions.Options;
 using Microsoft.Playwright;
+using Spectre.Console;
 
 namespace MartinCostello.EurovisionHue;
 
-internal sealed class EurovisionFeed(string url, string selector)
+internal sealed class EurovisionFeed(
+    IOptions<AppOptions> configuration,
+    IAnsiConsole console)
 {
     private readonly TimeSpan Frequency = TimeSpan.FromSeconds(10);
 
-    public async IAsyncEnumerable<Participant> GetParticipantsAsync(
+    public async IAsyncEnumerable<Participant> ParticipantsAsync(
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         using var playwright = await Playwright.CreateAsync();
@@ -22,7 +26,17 @@ internal sealed class EurovisionFeed(string url, string selector)
 
         var page = await context.NewPageAsync();
 
-        await page.GotoAsync(url, new() { WaitUntil = WaitUntilState.NetworkIdle });
+        await console
+            .Status()
+            .Spinner(Spinner.Known.Dots)
+            .StartAsync(
+                "Loading Eurovision feed...",
+                async (_) =>
+                {
+                    await page.GotoAsync(
+                        configuration.Value.FeedUrl,
+                        new() { WaitUntil = WaitUntilState.NetworkIdle });
+                });
 
         Participant? previous = null;
 
@@ -32,9 +46,7 @@ internal sealed class EurovisionFeed(string url, string selector)
 
             foreach (var article in await GetArticlesAsync(page))
             {
-                var text = await article.InnerTextAsync();
-
-                if (Participants.TryFind(text, out var participant))
+                if (Participants.TryFind(article, out var participant))
                 {
                     current = participant;
                     break;
@@ -58,15 +70,16 @@ internal sealed class EurovisionFeed(string url, string selector)
         }
     }
 
-    private async Task<IReadOnlyList<IElementHandle>> GetArticlesAsync(IPage page)
+    private async Task<IReadOnlyList<string>> GetArticlesAsync(IPage page)
     {
         try
         {
-            return await page.QuerySelectorAllAsync(selector);
+            var locator = page.Locator(configuration.Value.ArticleSelector);
+            return await locator.AllInnerTextsAsync();
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            // TODO Catch more specific 
+            console.WriteException(ex);
             return [];
         }
     }

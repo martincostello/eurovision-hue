@@ -1,18 +1,35 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
+    <Description>A .NET Global Tool that updates Hue lights to follow the Eurovision Song Contest.</Description>
+    <EnablePackageValidation>true</EnablePackageValidation>
     <ImplicitUsings>enable</ImplicitUsings>
+    <IsPackable>true</IsPackable>
     <Nullable>enable</Nullable>
     <OutputType>Exe</OutputType>
-	<RootNamespace>MartinCostello.EurovisionHue</RootNamespace>  
+    <PackAsTool>true</PackAsTool>
+    <PackageId>MartinCostello.EurovisionHue</PackageId>
+	  <RootNamespace>MartinCostello.EurovisionHue</RootNamespace>
     <TargetFramework>net9.0</TargetFramework>
+    <Title>EurovisionHue</Title>
+    <ToolCommandName>dotnet-eurovision-hue</ToolCommandName>
+    <UserSecretsId>MartinCostello.EurovisionHue</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
+    <None Update="appsettings.json" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" />
     <None Remove="Flags\*.png" />
     <EmbeddedResource Include="Flags\*.png" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="HueApi" Version="1.9.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="9.0.6" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.6" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="9.0.6" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.6" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.6" />
+    <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="9.6.0" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="9.0.6" />
     <PackageReference Include="Microsoft.Playwright" Version="1.52.0" />
+    <PackageReference Include="Polly.Extensions" Version="8.6.1" />
     <PackageReference Include="SixLabors.ImageSharp" Version="3.1.10" />
     <PackageReference Include="Spectre.Console" Version="0.50.0" />
   </ItemGroup>
