@@ -17,6 +17,8 @@ internal sealed class AppOptions
 
     public TimeSpan DiscoveryTimeout { get; set; } = TimeSpan.FromSeconds(10);
 
+    public TimeSpan FeedFrequency { get; set; } = TimeSpan.FromSeconds(10);
+
     public string FeedUrl { get; set; } = string.Empty;
 
     public string HueToken { get; set; } = string.Empty;
