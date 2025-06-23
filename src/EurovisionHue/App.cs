@@ -53,14 +53,11 @@ internal sealed class App(
 
         var feed = new EurovisionFeed(
             options,
-            console);
+            console,
+            timeProvider);
 
         await foreach (var participant in feed.ParticipantsAsync(cancellationToken).WithCancellation(cancellationToken))
         {
-            var now = timeProvider.GetLocalNow();
-
-            console.WriteLine($"[{now:t}] Detected {participant.Emoji} {participant.Name}");
-
             await console
                 .Status()
                 .Spinner(Spinner.Known.Dots)

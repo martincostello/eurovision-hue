@@ -9,11 +9,10 @@ using Spectre.Console;
 namespace MartinCostello.EurovisionHue;
 
 internal sealed class EurovisionFeed(
-    IOptions<AppOptions> configuration,
-    IAnsiConsole console)
+    IOptions<AppOptions> options,
+    IAnsiConsole console,
+    TimeProvider timeProvider)
 {
-    private static readonly TimeSpan Frequency = TimeSpan.FromSeconds(10);
-
     public async IAsyncEnumerable<Participant> ParticipantsAsync(
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
@@ -34,7 +33,7 @@ internal sealed class EurovisionFeed(
                 async (_) =>
                 {
                     await page.GotoAsync(
-                        configuration.Value.FeedUrl,
+                        options.Value.FeedUrl,
                         new() { WaitUntil = WaitUntilState.NetworkIdle });
                 });
 
@@ -55,13 +54,16 @@ internal sealed class EurovisionFeed(
 
             if (current is not null && current != previous)
             {
+                var now = timeProvider.GetLocalNow();
+                console.WriteLine($"[{now:t}] Detected {current.Emoji} {current.Name}");
+
                 yield return current;
                 previous = current;
             }
 
             try
             {
-                await Task.Delay(Frequency, cancellationToken);
+                await Task.Delay(options.Value.FeedFrequency, cancellationToken);
             }
             catch (TaskCanceledException)
             {
@@ -74,7 +76,7 @@ internal sealed class EurovisionFeed(
     {
         try
         {
-            var locator = page.Locator(configuration.Value.ArticleSelector);
+            var locator = page.Locator(options.Value.ArticleSelector);
             return await locator.AllInnerTextsAsync();
         }
         catch (Exception ex)
