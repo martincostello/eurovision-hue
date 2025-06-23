@@ -1,4 +1,7 @@
 <!DOCTYPE html>
+<!--
+  Use the following CSS selector to find the current participant: #participantsTable > tbody > tr:nth-child(1) > td:nth-child(2)
+-->
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -26,7 +29,7 @@
         <thead>
             <tr>
                 <th>Time</th>
-                <th>Participant</th>
+                <th>Content</th>
             </tr>
         </thead>
         <tbody>
@@ -92,7 +95,7 @@
             const row = document.createElement('tr');
             const now = new Date();
             const timestamp = now.toLocaleTimeString('en-GB', { hour12: false });
-            row.innerHTML = `<td>${timestamp}</td><td>${random}</td>`;
+            row.innerHTML = `<td>${timestamp}</td><td>The next act is ${random}.</td>`;
             tableBody.insertBefore(row, tableBody.firstChild);
         }
 
