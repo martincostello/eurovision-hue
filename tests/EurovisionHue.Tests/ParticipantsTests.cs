@@ -82,4 +82,18 @@ public static class ParticipantsTests
         colors.ShouldNotBeNull();
         colors.ShouldNotBeEmpty();
     }
+
+    [Fact]
+    public static void TryFind_Cannot_Load_A_Participant_If_None_Found()
+    {
+        // Arrange
+        string article = "This is a paragraph about the Eurovision Song Contest.";
+
+        // Act
+        var actual = Participants.TryFind(article, out var participant);
+
+        // Assert
+        actual.ShouldBeFalse();
+        participant.ShouldBeNull();
+    }
 }

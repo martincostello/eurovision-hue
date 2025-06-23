@@ -75,7 +75,7 @@ internal sealed record Participant(
     }
 
     public override int GetHashCode()
-        => Id?.GetHashCode(StringComparison.Ordinal) ?? 0;
+        => StringComparer.Ordinal.GetHashCode(Id);
 
     public override string ToString() => Name;
 }
