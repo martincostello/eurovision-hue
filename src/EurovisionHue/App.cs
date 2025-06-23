@@ -5,6 +5,7 @@ using HueApi.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Microsoft.Playwright;
 using Spectre.Console;
 using ConsoleColor = Spectre.Console.Color;
 
@@ -85,23 +86,30 @@ internal sealed class App(
 
         console.WriteLine();
 
-        await foreach (var participant in feed.ParticipantsAsync(cancellationToken).WithCancellation(cancellationToken))
+        try
         {
-            await console
-                .Status()
-                .Spinner(Spinner.Known.Dots)
-                .StartAsync(
-                    "Updating lights...",
-                    async (_) =>
-                    {
-                        var colors = participant.Colors(lights.Count);
-
-                        foreach ((var index, var light) in lights.Index())
+            await foreach (var participant in feed.ParticipantsAsync(cancellationToken).WithCancellation(cancellationToken))
+            {
+                await console
+                    .Status()
+                    .Spinner(Spinner.Known.Dots)
+                    .StartAsync(
+                        "Updating lights...",
+                        async (_) =>
                         {
-                            var color = colors[index % colors.Count];
-                            await client.ChangeAsync(light, color);
-                        }
-                    });
+                            var colors = participant.Colors(lights.Count);
+
+                            foreach ((var index, var light) in lights.Index())
+                            {
+                                var color = colors[index % colors.Count];
+                                await client.ChangeAsync(light, color);
+                            }
+                        });
+            }
+        }
+        catch (Exception ex) when (ex is OperationCanceledException or PlaywrightException)
+        {
+            // Ignore
         }
 
         return true;
