@@ -8,14 +8,14 @@ using Spectre.Console;
 
 namespace MartinCostello.EurovisionHue;
 
-internal sealed class LightsClientFactory(
+internal class LightsClientFactory(
     IOptions<AppOptions> options,
     IAnsiConsole console,
     HttpClient client)
 {
     private const string ApplicationName = "EurovisionHue";
 
-    public async Task<LightsClient?> CreateAsync(CancellationToken cancellationToken)
+    public virtual async Task<LightsClient?> CreateAsync(CancellationToken cancellationToken)
     {
         var fastTimeout = options.Value.DiscoveryTimeout;
         var maxTimeout = fastTimeout * 4;

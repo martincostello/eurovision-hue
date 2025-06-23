@@ -27,6 +27,6 @@
   </ItemGroup>
   <PropertyGroup>
     <CollectCoverage>true</CollectCoverage>
-    <Threshold>50</Threshold>
+    <Threshold>60</Threshold>
   </PropertyGroup>
 </Project>

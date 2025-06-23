@@ -29,7 +29,7 @@ public sealed class LightsClientTests(ITestOutputHelper outputHelper) : IDisposa
             {
                 new JsonObject()
                 {
-                    ["id"] = Guid.NewGuid(),
+                    ["id"] = "83b98620-2e23-47bc-9291-47e93e3c200c",
                     ["metadata"] = new JsonObject()
                     {
                         ["name"] = "My Lamp",
@@ -37,7 +37,7 @@ public sealed class LightsClientTests(ITestOutputHelper outputHelper) : IDisposa
                 },
                 new JsonObject()
                 {
-                    ["id"] = Guid.NewGuid(),
+                    ["id"] = "18731230-8d5e-4ebd-a6e2-9518438cbcec",
                     ["metadata"] = new JsonObject()
                     {
                         ["name"] = "Another Lamp",
