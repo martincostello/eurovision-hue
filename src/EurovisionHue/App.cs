@@ -2,6 +2,8 @@
 // Licensed under the Apache 2.0 license. See the LICENSE file in the project root for full license information.
 
 using HueApi.Models;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Spectre.Console;
 using ConsoleColor = Spectre.Console.Color;
@@ -14,6 +16,39 @@ internal sealed class App(
     EurovisionFeed feed,
     IOptions<AppOptions> options)
 {
+    public static async Task<int> RunAsync(
+        Action<IServiceCollection> configure,
+        CancellationToken cancellationToken)
+    {
+        var userSettings = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            "MartinCostello",
+            "EurovisionHue",
+            "usersettings.json");
+
+        var configuration = new ConfigurationBuilder()
+            .AddJsonFile("appsettings.json", optional: true)
+            .AddJsonFile(userSettings, optional: true)
+            .AddEnvironmentVariables()
+            .AddUserSecrets<App>()
+            .Build();
+
+        var services = new ServiceCollection();
+
+        services.AddEurovisionHue(configuration);
+
+        services.AddOptions<AppOptions>()
+                .PostConfigure((p) => p.UserSettings = userSettings);
+
+        configure(services);
+
+        using var provider = services.BuildServiceProvider();
+
+        var app = provider.GetRequiredService<App>();
+
+        return await app.RunAsync(cancellationToken) ? 0 : 1;
+    }
+
     public async Task<bool> RunAsync(CancellationToken cancellationToken)
     {
         console.Write(new FigletText("Eurovision Hue").Color(ConsoleColor.Gold1));
