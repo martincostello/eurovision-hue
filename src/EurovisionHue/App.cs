@@ -45,7 +45,6 @@ internal sealed class App(
                     .AddChoices(lights)
                     .UseConverter((p) => p.Metadata?.Name ?? p.Id.ToString()));
 
-
             settings.LightIds = [.. lights.Select((p) => p.Id)];
             await settings.SaveAsync(cancellationToken);
         }

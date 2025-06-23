@@ -66,6 +66,7 @@ internal static class Participants
     private static readonly int _limit;
     private static readonly SearchValues<string> _needle;
 
+#pragma warning disable CA1810
     static Participants()
     {
         _names = new(StringComparer.OrdinalIgnoreCase);
@@ -82,6 +83,7 @@ internal static class Participants
         _limit = _names.Keys.MaxBy((p) => p.Length)!.Length;
         _needle = SearchValues.Create([.. _names.Keys], StringComparison.OrdinalIgnoreCase);
     }
+#pragma warning restore CA1810
 
     public static bool TryFind(ReadOnlySpan<char> content, out Participant? participant)
     {

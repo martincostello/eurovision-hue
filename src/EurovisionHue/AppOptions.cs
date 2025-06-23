@@ -15,7 +15,7 @@ internal sealed class AppOptions
 
     public string ArticleSelector { get; set; } = string.Empty;
 
-    public TimeSpan DiscoveryTimeout = TimeSpan.FromSeconds(10);
+    public TimeSpan DiscoveryTimeout { get; set; } = TimeSpan.FromSeconds(10);
 
     public string FeedUrl { get; set; } = string.Empty;
 

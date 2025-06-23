@@ -12,7 +12,7 @@ internal sealed class EurovisionFeed(
     IOptions<AppOptions> configuration,
     IAnsiConsole console)
 {
-    private readonly TimeSpan Frequency = TimeSpan.FromSeconds(10);
+    private static readonly TimeSpan Frequency = TimeSpan.FromSeconds(10);
 
     public async IAsyncEnumerable<Participant> ParticipantsAsync(
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
