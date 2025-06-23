@@ -4,6 +4,7 @@
 using HueApi;
 using HueApi.BridgeLocator;
 using HueApi.Models.Clip;
+using HueApi.Models.Exceptions;
 using Microsoft.Extensions.Options;
 using Spectre.Console;
 
@@ -68,14 +69,22 @@ internal class LightsClientFactory(
                 return null;
             }
 
-            var registration = await RegisterAsync(bridge.IpAddress);
+            try
+            {
+                var registration = await RegisterAsync(bridge.IpAddress);
 
-            token = registration?.Username ?? string.Empty;
+                token = registration?.Username ?? string.Empty;
 
-            var settings = options.Value;
+                var settings = options.Value;
 
-            settings.HueToken = token;
-            await settings.SaveAsync(cancellationToken);
+                settings.HueToken = token;
+                await settings.SaveAsync(cancellationToken);
+            }
+            catch (LinkButtonNotPressedException)
+            {
+                console.WriteErrorLine("The link button on the Hue bridge was not pressed. Unable to connect.");
+                return null;
+            }
         }
 
         return new(

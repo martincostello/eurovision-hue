@@ -8,7 +8,7 @@
 
 Updates your Hue lights to follow along with the Eurovision Song Contest.
 
-This project was inspired by the [cnorthwood/eurovisionhue project][inspiration].
+This project was inspired by the [cnorthwood/eurovisionhue][inspiration] project.
 
 ## Building and Testing
 
