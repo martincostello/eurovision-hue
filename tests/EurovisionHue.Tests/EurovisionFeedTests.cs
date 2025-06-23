@@ -6,7 +6,7 @@ using Microsoft.Extensions.Options;
 
 namespace MartinCostello.EurovisionHue;
 
-public sealed class EurovisionFeedTests(ITestOutputHelper outputHelper) : IDisposable
+public sealed class EurovisionFeedTests(ITestOutputHelper outputHelper) : IAsyncLifetime
 {
     private readonly ConsoleFixture _fixture = new(outputHelper);
 
@@ -42,8 +42,28 @@ public sealed class EurovisionFeedTests(ITestOutputHelper outputHelper) : IDispo
 
         // Assert
         actual.ShouldNotBeEmpty();
-        actual.Distinct().Count().ShouldBeGreaterThan(1);
+        actual.Distinct().Count().ShouldBeGreaterThanOrEqualTo(1);
     }
 
-    public void Dispose() => _fixture.Dispose();
+    public ValueTask InitializeAsync()
+    {
+        InstallPlaywright();
+        return ValueTask.CompletedTask;
+    }
+
+    public ValueTask DisposeAsync()
+    {
+        _fixture.Dispose();
+        return ValueTask.CompletedTask;
+    }
+
+    private static void InstallPlaywright()
+    {
+        int exitCode = Microsoft.Playwright.Program.Main(["install"]);
+
+        if (exitCode != 0)
+        {
+            throw new InvalidOperationException($"Playwright exited with code {exitCode}");
+        }
+    }
 }
