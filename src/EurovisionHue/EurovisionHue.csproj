@@ -26,4 +26,7 @@
     <PackageReference Include="SixLabors.ImageSharp" />
     <PackageReference Include="Spectre.Console" />
   </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="EurovisionHue.Tests" Key="$(StrongNamePublicKey)" />
+  </ItemGroup>
 </Project>

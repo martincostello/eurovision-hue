@@ -1,8 +1,8 @@
 <Solution>
-  <Configurations>
-    <Platform Name="Any CPU" />
-  </Configurations>
   <Folder Name="/src/">
     <Project Path="src/EurovisionHue/EurovisionHue.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/EurovisionHue.Tests/EurovisionHue.Tests.csproj" />
   </Folder>
 </Solution>
