@@ -3,7 +3,7 @@
 
 if (args.SequenceEqual(["--install-deps"]))
 {
-    return Microsoft.Playwright.Program.Main(["install", "chromium", "--with-deps"]);
+    return Microsoft.Playwright.Program.Main(["install", "chromium", "--only-shell", "--with-deps"]);
 }
 
 using var cts = new CancellationTokenSource();
