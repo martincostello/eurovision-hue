@@ -36,7 +36,7 @@ public sealed class BrowserFixture : IAsyncLifetime, ICollectionFixture<BrowserF
 
     private static void InstallPlaywright()
     {
-        int exitCode = Microsoft.Playwright.Program.Main(["install"]);
+        int exitCode = Microsoft.Playwright.Program.Main(["install", "chromium", "--only-shell"]);
 
         if (exitCode != 0)
         {
