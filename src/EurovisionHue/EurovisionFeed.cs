@@ -9,9 +9,9 @@ using Spectre.Console;
 namespace MartinCostello.EurovisionHue;
 
 internal sealed class EurovisionFeed(
-    IOptions<AppOptions> options,
     IAnsiConsole console,
-    TimeProvider timeProvider)
+    TimeProvider timeProvider,
+    IOptions<AppOptions> options)
 {
     public async IAsyncEnumerable<Participant> ParticipantsAsync(
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
