@@ -10,7 +10,7 @@ public sealed class BrowserFixture : IAsyncLifetime, ICollectionFixture<BrowserF
 {
     private static readonly string DemoHtmlFile = GetDemoPageUrl();
 
-    public string ArticleSelector { get; } = "#participantsTable > tbody > tr > td:nth-child(2)";
+    public string ArticleSelector { get; } = "td:nth-child(2)";
 
     public string FeedUrl { get; } = DemoHtmlFile;
 
