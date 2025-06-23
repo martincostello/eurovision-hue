@@ -14,6 +14,7 @@ internal static class ServiceCollectionExtensions
         IConfiguration configuration)
     {
         services.AddSingleton<App>()
+                .AddSingleton<EurovisionFeed>()
                 .AddSingleton<LightsClientFactory>()
                 .AddSingleton(AnsiConsole.Console)
                 .AddSingleton(TimeProvider.System);

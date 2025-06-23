@@ -9,18 +9,17 @@ using ConsoleColor = Spectre.Console.Color;
 namespace MartinCostello.EurovisionHue;
 
 internal sealed class App(
-    IOptions<AppOptions> options,
+    LightsClientFactory clientFactory,
     IAnsiConsole console,
-    HttpClient httpClient,
-    TimeProvider timeProvider)
+    EurovisionFeed feed,
+    IOptions<AppOptions> options)
 {
     public async Task<bool> RunAsync(CancellationToken cancellationToken)
     {
         console.Write(new FigletText("Eurovision Hue").Color(ConsoleColor.Gold1));
         console.WriteLine();
 
-        var factory = new LightsClientFactory(options, console, httpClient);
-        var client = await factory.CreateAsync(cancellationToken);
+        var client = await clientFactory.CreateAsync(cancellationToken);
 
         if (client is null)
         {
@@ -50,11 +49,6 @@ internal sealed class App(
         }
 
         console.WriteLine();
-
-        var feed = new EurovisionFeed(
-            options,
-            console,
-            timeProvider);
 
         await foreach (var participant in feed.ParticipantsAsync(cancellationToken).WithCancellation(cancellationToken))
         {
