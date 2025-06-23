@@ -22,7 +22,7 @@ public sealed class AppFixture(ITestOutputHelper outputHelper) : IDisposable
 
     public HttpClientInterceptorOptions HttpInterception => _interception;
 
-    public string HueToken { get; } = "not-a-real-key";
+    public string HueToken { get; } = "not-a-real-token";
 
     public TimeProvider TimeProvider => _timeProvider;
 
