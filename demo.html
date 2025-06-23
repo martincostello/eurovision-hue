@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Eurovision Song Contest 🇪🇺📺🎤</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 50%;
+            margin: 2em auto;
+        }
+        th,
+        td {
+            border: 1px solid #ccc;
+            padding: 0.5em 1em;
+            text-align: left;
+        }
+        th {
+            background: #f0f0f0;
+        }
+    </style>
+</head>
+
+<body>
+    <table id="participantsTable">
+        <thead>
+            <tr>
+                <th>Time</th>
+                <th>Participant</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+    <script>
+        const participants = [
+            "Albania",
+            "Andorra",
+            "Armenia",
+            "Australia",
+            "Austria",
+            "Azerbaijan",
+            "Belarus",
+            "Belgium",
+            "Bosnia and Herzegovina",
+            "Bulgaria",
+            "Croatia",
+            "Cyprus",
+            "Czechia",
+            "Denmark",
+            "Estonia",
+            "Finland",
+            "France",
+            "Georgia",
+            "Germany",
+            "Greece",
+            "Hungary",
+            "Iceland",
+            "Ireland",
+            "Israel",
+            "Italy",
+            "Latvia",
+            "Lithuania",
+            "Luxembourg",
+            "Malta",
+            "Moldova",
+            "Monaco",
+            "Morocco",
+            "Montenegro",
+            "Netherlands",
+            "North Macedonia",
+            "Norway",
+            "Poland",
+            "Portugal",
+            "Romania",
+            "Russia",
+            "San Marino",
+            "Serbia",
+            "Slovakia",
+            "Slovenia",
+            "Spain",
+            "Sweden",
+            "Switzerland",
+            "Turkey",
+            "Ukraine",
+            "United Kingdom"
+        ];
+
+        function addParticipant() {
+            const tableBody = document.getElementById('participantsTable').querySelector('tbody');
+            const random = participants[Math.floor(Math.random() * participants.length)];
+            const row = document.createElement('tr');
+            const now = new Date();
+            const timestamp = now.toLocaleTimeString('en-GB', { hour12: false });
+            row.innerHTML = `<td>${timestamp}</td><td>${random}</td>`;
+            tableBody.insertBefore(row, tableBody.firstChild);
+        }
+
+        const timeout = 5000;
+
+        addParticipant();
+        setInterval(addParticipant, timeout);
+    </script>
+</body>
+</html>
