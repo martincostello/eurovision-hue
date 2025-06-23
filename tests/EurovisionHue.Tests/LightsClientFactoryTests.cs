@@ -4,6 +4,7 @@
 using System.Text.Json.Nodes;
 using HueApi.BridgeLocator;
 using HueApi.Models.Clip;
+using HueApi.Models.Exceptions;
 using Microsoft.Extensions.Options;
 using Spectre.Console;
 
@@ -45,6 +46,31 @@ public sealed class LightsClientFactoryTests(ITestOutputHelper outputHelper) : I
         var factory = new MockLightsClientFactory(["192.168.0.1"], client, _fixture.Console, options)
         {
             Token = Guid.NewGuid().ToString(),
+        };
+
+        // Act
+        var actual = await factory.CreateAsync(_fixture.CancellationToken);
+
+        // Assert
+        actual.ShouldBeNull();
+    }
+
+    [Fact]
+    public async Task Returns_Null_When_One_Bridge_Found_But_Not_Confirmed_By_User_From_Bridge()
+    {
+        // Arrange
+        _fixture.Console.Input.PushTextWithEnter("y");
+
+        var options = Options.Create(new AppOptions()
+        {
+            HueToken = string.Empty,
+        });
+
+        using var client = new HttpClient();
+
+        var factory = new MockLightsClientFactory(["LinkButtonNotPressedException"], client, _fixture.Console, options)
+        {
+            Token = string.Empty,
         };
 
         // Act
@@ -114,6 +140,11 @@ public sealed class LightsClientFactoryTests(ITestOutputHelper outputHelper) : I
 
         protected override Task<RegisterEntertainmentResult?> RegisterAsync(string ip)
         {
+            if (ip is "LinkButtonNotPressedException")
+            {
+                throw new LinkButtonNotPressedException();
+            }
+
             var result = new RegisterEntertainmentResult() { Username = Token };
             return Task.FromResult<RegisterEntertainmentResult?>(result);
         }

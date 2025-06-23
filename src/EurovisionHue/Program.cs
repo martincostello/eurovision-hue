@@ -13,4 +13,4 @@ Console.CancelKeyPress += (_, e) =>
     }
 };
 
-await MartinCostello.EurovisionHue.App.RunAsync((_) => { }, cts.Token);
+return await MartinCostello.EurovisionHue.App.RunAsync((_) => { }, cts.Token);
