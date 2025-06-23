@@ -3,14 +3,12 @@
 
 using System.Reflection;
 using Microsoft.Extensions.Options;
-using Spectre.Console.Testing;
 
 namespace MartinCostello.EurovisionHue;
 
 public sealed class EurovisionFeedTests(ITestOutputHelper outputHelper) : IDisposable
 {
-    private readonly TestConsole _console = new();
-    private readonly ITestOutputHelper _outputHelper = outputHelper;
+    private readonly ConsoleFixture _fixture = new(outputHelper);
 
     [Fact]
     public async Task Can_Find_Participants()
@@ -30,7 +28,7 @@ public sealed class EurovisionFeedTests(ITestOutputHelper outputHelper) : IDispo
             FeedUrl = new Uri(feedUrl).LocalPath,
         };
 
-        var target = new EurovisionFeed(Options.Create(options), _console, TimeProvider.System);
+        var target = new EurovisionFeed(Options.Create(options), _fixture.Console, _fixture.TimeProvider);
 
         var actual = new List<Participant>();
 
@@ -47,13 +45,5 @@ public sealed class EurovisionFeedTests(ITestOutputHelper outputHelper) : IDispo
         actual.Distinct().Count().ShouldBeGreaterThan(1);
     }
 
-    public void Dispose()
-    {
-        if (_console is { })
-        {
-            _outputHelper.WriteLine(string.Empty);
-            _outputHelper.WriteLine(_console.Output);
-            _console.Dispose();
-        }
-    }
+    public void Dispose() => _fixture.Dispose();
 }
