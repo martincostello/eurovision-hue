@@ -25,7 +25,7 @@ internal sealed class AppOptions
 
     public IList<Guid> LightIds { get; set; } = [];
 
-    internal string UserSettings { get; set; } = ".eurovision-hue.json";
+    internal string UserSettings { get; set; } = "usersettings.json";
 
     public async Task SaveAsync(CancellationToken cancellationToken)
     {

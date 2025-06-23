@@ -21,8 +21,10 @@ internal sealed class App(
         CancellationToken cancellationToken)
     {
         var userSettings = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
-            ".eurovision-hue.json");
+            Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            "MartinCostello",
+            "EurovisionHue",
+            "usersettings.json");
 
         var configuration = new ConfigurationBuilder()
             .AddJsonFile("appsettings.json", optional: true)
