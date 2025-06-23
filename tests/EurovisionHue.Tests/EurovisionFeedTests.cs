@@ -1,41 +1,38 @@
 ﻿// Copyright (c) Martin Costello, 2025. All rights reserved.
 // Licensed under the Apache 2.0 license. See the LICENSE file in the project root for full license information.
 
-using System.Reflection;
 using Microsoft.Extensions.Options;
 
 namespace MartinCostello.EurovisionHue;
 
-public sealed class EurovisionFeedTests(ITestOutputHelper outputHelper) : IAsyncLifetime
+[Collection<BrowserFixture>]
+public sealed class EurovisionFeedTests(
+    BrowserFixture browser,
+    ITestOutputHelper outputHelper) : IntegrationTests(browser, outputHelper)
 {
-    private readonly ConsoleFixture _fixture = new(outputHelper);
-
     [Fact]
     public async Task Can_Find_Participants()
     {
         // Arrange
-        var solutionRoot = typeof(EurovisionFeedTests).Assembly
-            .GetCustomAttributes<AssemblyMetadataAttribute>()
-            .First((p) => p.Key is "SolutionRoot")
-            .Value!;
-
-        var feedUrl = Path.Combine(solutionRoot, "demo.html");
-
         var options = new AppOptions()
         {
-            ArticleSelector = "#participantsTable > tbody > tr > td:nth-child(2)",
+            ArticleSelector = Browser.ArticleSelector,
             FeedFrequency = TimeSpan.FromSeconds(5),
-            FeedUrl = new Uri($"file://{feedUrl}").ToString(),
+            FeedUrl = Browser.FeedUrl,
         };
 
-        var target = new EurovisionFeed(Options.Create(options), _fixture.Console, _fixture.TimeProvider);
+        var target = new EurovisionFeed(
+            Application.Console,
+            Application.TimeProvider,
+            Options.Create(options));
 
         var actual = new List<Participant>();
 
-        using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(15));
+        using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(15));
+        using var combined = CancellationTokenSource.CreateLinkedTokenSource(timeout.Token, Application.CancellationToken);
 
         // Act
-        await foreach (var participant in target.ParticipantsAsync(cts.Token).WithCancellation(cts.Token))
+        await foreach (var participant in target.ParticipantsAsync(combined.Token).WithCancellation(combined.Token))
         {
             actual.Add(participant);
         }
@@ -43,27 +40,5 @@ public sealed class EurovisionFeedTests(ITestOutputHelper outputHelper) : IAsync
         // Assert
         actual.ShouldNotBeEmpty();
         actual.Distinct().Count().ShouldBeGreaterThanOrEqualTo(1);
-    }
-
-    public ValueTask InitializeAsync()
-    {
-        InstallPlaywright();
-        return ValueTask.CompletedTask;
-    }
-
-    public ValueTask DisposeAsync()
-    {
-        _fixture.Dispose();
-        return ValueTask.CompletedTask;
-    }
-
-    private static void InstallPlaywright()
-    {
-        int exitCode = Microsoft.Playwright.Program.Main(["install"]);
-
-        if (exitCode != 0)
-        {
-            throw new InvalidOperationException($"Playwright exited with code {exitCode}");
-        }
     }
 }

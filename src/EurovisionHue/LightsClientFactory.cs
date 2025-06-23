@@ -9,9 +9,9 @@ using Spectre.Console;
 namespace MartinCostello.EurovisionHue;
 
 internal class LightsClientFactory(
-    IOptions<AppOptions> options,
+    HttpClient client,
     IAnsiConsole console,
-    HttpClient client)
+    IOptions<AppOptions> options)
 {
     private const string ApplicationName = "EurovisionHue";
 
