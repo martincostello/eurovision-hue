@@ -25,7 +25,7 @@ public sealed class EurovisionFeedTests(ITestOutputHelper outputHelper) : IAsync
         {
             ArticleSelector = "#participantsTable > tbody > tr > td:nth-child(2)",
             FeedFrequency = TimeSpan.FromSeconds(5),
-            FeedUrl = new Uri(feedUrl).LocalPath,
+            FeedUrl = new Uri($"file://{feedUrl}").ToString(),
         };
 
         var target = new EurovisionFeed(Options.Create(options), _fixture.Console, _fixture.TimeProvider);
