@@ -6,11 +6,15 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace MartinCostello.EurovisionHue;
 
-internal sealed record Participant(string Name) : IEquatable<Participant>
+internal sealed record Participant(
+    string Id,
+    string Name,
+    string Emoji,
+    IReadOnlyList<string>? AlternateNames = default) : IEquatable<Participant>
 {
-    private List<Rgba32>? _colors;
+    private List<Color>? _colors;
 
-    public static implicit operator Participant(string name) => new(name);
+    public IReadOnlyList<string> Names { get; } = [Name, .. AlternateNames ?? []];
 
     public bool Equals(Participant? other)
     {
@@ -24,31 +28,33 @@ internal sealed record Participant(string Name) : IEquatable<Participant>
             return true;
         }
 
-        return string.Equals(Name, other.Name, StringComparison.Ordinal);
+        return string.Equals(Id, other.Id, StringComparison.Ordinal);
     }
 
-    public IReadOnlyList<Rgba32> Colors(int count)
+    public IReadOnlyList<Color> Colors(int count)
     {
         if (_colors is null)
         {
             var type = typeof(Participant);
 
-            using var stream = type.Assembly.GetManifestResourceStream($"{type.Namespace}.Flags.{Name}.png")!;
+            using var stream = type.Assembly.GetManifestResourceStream($"{type.Namespace}.Flags.{Id}.png")!;
             using var image = Image.Load<Rgba32>(stream);
 
-            var histogram = new Dictionary<Rgba32, int>();
+            var histogram = new Dictionary<Color, int>();
 
             for (int y = 0; y < image.Height; y++)
             {
                 for (int x = 0; x < image.Width; x++)
                 {
-                    var color = image[x, y];
+                    var pixel = image[x, y];
 
-                    if (color.A < 128 || (color.R + color.G + color.B == 0))
+                    if (pixel.A < 128 || (pixel.R + pixel.G + pixel.B == 0))
                     {
                         // Skip mostly transparent pixels and black pixels
                         continue;
                     }
+
+                    var color = new Color(pixel.R, pixel.G, pixel.B);
 
                     if (!histogram.TryGetValue(color, out var value))
                     {
@@ -69,7 +75,7 @@ internal sealed record Participant(string Name) : IEquatable<Participant>
     }
 
     public override int GetHashCode()
-        => Name?.GetHashCode(StringComparison.OrdinalIgnoreCase) ?? 0;
+        => Id?.GetHashCode(StringComparison.Ordinal) ?? 0;
 
     public override string ToString() => Name;
 }

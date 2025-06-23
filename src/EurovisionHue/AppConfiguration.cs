@@ -5,9 +5,9 @@ namespace MartinCostello.EurovisionHue;
 
 internal sealed class AppConfiguration
 {
-    public string? ArticleSelector { get; set; }
+    public string ArticleSelector { get; set; } = "article[data-testid='content-post']";
 
-    public string? FeedUrl { get; set; }
+    public string FeedUrl { get; set; } = "https://www.bbc.co.uk/news/live/c74n9n5l1nxt";
 
     public string? HueToken { get; set; }
 

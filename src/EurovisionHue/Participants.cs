@@ -7,77 +7,87 @@ namespace MartinCostello.EurovisionHue;
 
 internal static class Participants
 {
-    private static readonly Dictionary<string, Participant> _participants = new()
-    {
-        ["Albania"] = "ALB",
-        ["Andorra"] = "AND",
-        ["Armenia"] = "ARM",
-        ["Australia"] = "AUS",
-        ["Austria"] = "AUT",
-        ["Azerbaijan"] = "AZE",
-        ["Belarus"] = "BLR",
-        ["Belgium"] = "BEL",
-        ["Bosnia and Herzegovina"] = "BIH",
-        ["Bulgaria"] = "BGR",
-        ["Croatia"] = "HRV",
-        ["Cyprus"] = "CYP",
-        ["Czechia"] = "CZE",
-        ["Denmark"] = "DNK",
-        ["Estonia"] = "EST",
-        ["Finland"] = "FIN",
-        ["France"] = "FRA",
-        ["Georgia"] = "GEO",
-        ["Germany"] = "DEU",
-        ["Greece"] = "GRC",
-        ["Hungary"] = "HUN",
-        ["Iceland"] = "ISL",
-        ["Ireland"] = "IRL",
-        ["Israel"] = "ISR",
-        ["Italy"] = "ITA",
-        ["Latvia"] = "LVA",
-        ["Lithuania"] = "LTU",
-        ["Luxembourg"] = "LUX",
-        ["Malta"] = "MLT",
-        ["Moldova"] = "MDA",
-        ["Monaco"] = "MCO",
-        ["Morocco"] = "MAR",
-        ["Montenegro"] = "MNE",
-        ["Netherlands"] = "NLD",
-        ["North Macedonia"] = "MKD",
-        ["Norway"] = "NOR",
-        ["Poland"] = "POL",
-        ["Portugal"] = "PRT",
-        ["Romania"] = "ROU",
-        ["Russia"] = "RUS",
-        ["San Marino"] = "SMR",
-        ["Serbia"] = "SRB",
-        ["Slovakia"] = "SVK",
-        ["Slovenia"] = "SVN",
-        ["Spain"] = "ESP",
-        ["Sweden"] = "SWE",
-        ["Switzerland"] = "CHE",
-        ["Turkey"] = "TUR",
-        ["Turkiye"] = "TUR",
-        ["Ukraine"] = "UKR",
-        ["United Kingdom"] = "GBR",
-    };
+    private static readonly List<Participant> _participants =
+    [
+        new("ALB", "Albania", "🇦🇱"),
+        new("AND", "Andorra", "🇦🇩"),
+        new("ARM", "Armenia", "🇦🇲"),
+        new("AUS", "Australia", "🇦🇺"),
+        new("AUT", "Austria", "🇦🇹"),
+        new("AZE", "Azerbaijan", "🇦🇿"),
+        new("BLR", "Belarus", "🇧🇾"),
+        new("BEL", "Belgium", "🇧🇪"),
+        new("BIH", "Bosnia and Herzegovina", "🇧🇦", ["Bosnia & Herzegovina"]),
+        new("BGR", "Bulgaria", "🇧🇬"),
+        new("HRV", "Croatia", "🇭🇷"),
+        new("CYP", "Cyprus", "🇨🇾"),
+        new("CZE", "Czechia", "🇨🇿"),
+        new("DNK", "Denmark", "🇩🇰"),
+        new("EST", "Estonia", "🇪🇪"),
+        new("FIN", "Finland", "🇫🇮"),
+        new("FRA", "France", "🇫🇷"),
+        new("GEO", "Georgia", "🇬🇪"),
+        new("DEU", "Germany", "🇩🇪"),
+        new("GRC", "Greece", "🇬🇷"),
+        new("HUN", "Hungary", "🇭🇺"),
+        new("ISL", "Iceland", "🇮🇸"),
+        new("IRL", "Ireland", "🇮🇪"),
+        new("ISR", "Israel", "🇮🇱"),
+        new("ITA", "Italy", "🇮🇹"),
+        new("LVA", "Latvia", "🇱🇻"),
+        new("LTU", "Lithuania", "🇱🇹"),
+        new("LUX", "Luxembourg", "🇱🇺"),
+        new("MLT", "Malta", "🇲🇹"),
+        new("MDA", "Moldova", "🇲🇩"),
+        new("MCO", "Monaco", "🇲🇨"),
+        new("MAR", "Morocco", "🇲🇦"),
+        new("MNE", "Montenegro", "🇲🇪"),
+        new("NLD", "Netherlands", "🇳🇱"),
+        new("MKD", "North Macedonia", "🇲🇰"),
+        new("NOR", "Norway", "🇳🇴"),
+        new("POL", "Poland", "🇵🇱"),
+        new("PRT", "Portugal", "🇵🇹"),
+        new("ROU", "Romania", "🇷🇴"),
+        new("RUS", "Russia", "🇷🇺"),
+        new("SMR", "San Marino", "🇸🇲"),
+        new("SRB", "Serbia", "🇷🇸"),
+        new("SVK", "Slovakia", "🇸🇰"),
+        new("SVN", "Slovenia", "🇸🇮"),
+        new("ESP", "Spain", "🇪🇸"),
+        new("SWE", "Sweden", "🇸🇪"),
+        new("CHE", "Switzerland", "🇨🇭"),
+        new("TUR", "Turkey", "🇹🇷", ["Turkiye", "Türkiye"]),
+        new("UKR", "Ukraine", "🇺🇦"),
+        new("GBR", "United Kingdom", "🇬🇧"),
+    ];
 
+    private static readonly Dictionary<string, Participant> _names;
     private static readonly Dictionary<string, Participant>.AlternateLookup<ReadOnlySpan<char>> _lookup;
     private static readonly int _limit;
     private static readonly SearchValues<string> _needle;
 
     static Participants()
     {
-        _lookup = _participants.GetAlternateLookup<ReadOnlySpan<char>>();
-        _limit = _participants.Keys.MaxBy((p) => p.Length)!.Length;
-        _needle = SearchValues.Create([.. _participants.Keys], StringComparison.OrdinalIgnoreCase);
+        _names = new(StringComparer.OrdinalIgnoreCase);
+
+        foreach (var participant in _participants)
+        {
+            foreach (var name in participant.Names)
+            {
+                _names[name] = participant;
+            }
+        }
+
+        _lookup = _names.GetAlternateLookup<ReadOnlySpan<char>>();
+        _limit = _names.Keys.MaxBy((p) => p.Length)!.Length;
+        _needle = SearchValues.Create([.. _names.Keys], StringComparison.OrdinalIgnoreCase);
     }
 
     public static bool TryFind(ReadOnlySpan<char> content, out Participant? participant)
     {
         participant = null;
 
-        if (content.IndexOfAny(_needle) is { } index && index >= 0)
+        if (content.IndexOfAny(_needle) is { } index && index > -1)
         {
             content = content[index..];
 
@@ -87,9 +97,8 @@ internal static class Participants
             {
                 var key = content[..length++];
 
-                if (_lookup.TryGetValue(key, out var value))
+                if (_lookup.TryGetValue(key, out participant))
                 {
-                    participant = value;
                     return true;
                 }
             }
