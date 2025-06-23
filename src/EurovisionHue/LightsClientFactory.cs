@@ -3,6 +3,7 @@
 
 using HueApi;
 using HueApi.BridgeLocator;
+using HueApi.Models.Clip;
 using Microsoft.Extensions.Options;
 using Spectre.Console;
 
@@ -25,7 +26,7 @@ internal class LightsClientFactory(
             .Spinner(Spinner.Known.Dots)
             .StartAsync(
                 "Searching for Hue bridges...",
-                async (_) => await HueBridgeDiscovery.CompleteDiscoveryAsync(fastTimeout, maxTimeout));
+                async (_) => await DiscoverAsync(fastTimeout, maxTimeout));
 
         LocatedBridge bridge;
 
@@ -67,10 +68,7 @@ internal class LightsClientFactory(
                 return null;
             }
 
-            var registration = await LocalHueApi.RegisterAsync(
-                bridge.IpAddress,
-                ApplicationName,
-                Environment.MachineName);
+            var registration = await RegisterAsync(bridge.IpAddress);
 
             token = registration?.Username ?? string.Empty;
 
@@ -86,4 +84,10 @@ internal class LightsClientFactory(
             client,
             console);
     }
+
+    protected virtual async Task<IList<LocatedBridge>> DiscoverAsync(TimeSpan fastTimeout, TimeSpan maxTimeout)
+        => await HueBridgeDiscovery.CompleteDiscoveryAsync(fastTimeout, maxTimeout);
+
+    protected virtual async Task<RegisterEntertainmentResult?> RegisterAsync(string ip)
+        => await LocalHueApi.RegisterAsync(ip, ApplicationName, Environment.MachineName);
 }
