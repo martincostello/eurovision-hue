@@ -8,12 +8,72 @@ using Spectre.Console;
 
 namespace MartinCostello.EurovisionHue;
 
-internal sealed class EurovisionFeed(
-    IAnsiConsole console,
-    TimeProvider timeProvider,
-    IOptions<AppOptions> options)
+internal sealed class EurovisionFeed : IDisposable
 {
+    private readonly IDisposable? _changed;
+    private readonly IAnsiConsole _console;
+    private readonly TimeSpan _frequency;
+    private readonly TimeProvider _timeProvider;
+
+    private CancellationTokenSource _reloaded;
+    private string _feedUrl;
+    private string _selector;
+    private Participant? _participant;
+
+    public EurovisionFeed(
+        IAnsiConsole console,
+        TimeProvider timeProvider,
+        IOptionsMonitor<AppOptions> options)
+    {
+        _console = console;
+        _timeProvider = timeProvider;
+
+        var snapshot = options.CurrentValue;
+
+        _feedUrl = snapshot.FeedUrl!;
+        _selector = snapshot.ArticleSelector;
+        _frequency = snapshot.FeedFrequency;
+
+        _reloaded = new CancellationTokenSource();
+        _changed = options.OnChange((updated, _) =>
+        {
+            if (updated.FeedUrl != _feedUrl || updated.ArticleSelector != _selector)
+            {
+                _feedUrl = updated.FeedUrl;
+                _selector = updated.ArticleSelector;
+
+                var previous = Interlocked.Exchange(ref _reloaded, new CancellationTokenSource());
+                previous.Cancel();
+                previous.Dispose();
+            }
+        });
+    }
+
+    public void Dispose()
+    {
+        _changed?.Dispose();
+        _reloaded.Dispose();
+    }
+
     public async IAsyncEnumerable<Participant> ParticipantsAsync(
+        [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
+        while (!cancellationToken.IsCancellationRequested)
+        {
+            var reloaded = _reloaded.Token;
+            using var linked = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, reloaded);
+
+            await foreach (var participant in ParticipantsAsync(_feedUrl, _selector, _frequency, linked.Token))
+            {
+                yield return participant;
+            }
+        }
+    }
+
+    private async IAsyncEnumerable<Participant> ParticipantsAsync(
+        string feedUrl,
+        string selector,
+        TimeSpan frequency,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         using var playwright = await Playwright.CreateAsync();
@@ -25,25 +85,23 @@ internal sealed class EurovisionFeed(
 
         var page = await context.NewPageAsync();
 
-        await console
+        await _console
             .Status()
             .Spinner(Spinner.Known.Dots)
             .StartAsync(
-                "Loading Eurovision feed...",
+                $"Loading Eurovision feed from {_feedUrl}...",
                 async (_) =>
                 {
                     await page.GotoAsync(
-                        options.Value.FeedUrl,
+                        feedUrl,
                         new() { WaitUntil = WaitUntilState.NetworkIdle });
                 });
-
-        Participant? previous = null;
 
         while (!cancellationToken.IsCancellationRequested)
         {
             Participant? current = null;
 
-            foreach (var article in await GetArticlesAsync(page))
+            foreach (var article in await GetArticlesAsync(page, selector))
             {
                 if (Participants.TryFind(article, out var participant))
                 {
@@ -52,18 +110,18 @@ internal sealed class EurovisionFeed(
                 }
             }
 
-            if (current is not null && current != previous)
+            if (current is not null && current != _participant)
             {
-                var now = timeProvider.GetLocalNow();
-                console.WriteLine($"[{now:t}] Detected {current.Emoji} {current.Name}");
+                var now = _timeProvider.GetLocalNow();
+                _console.WriteLine($"[{now:t}] Found {current.Emoji} {current.Name}");
 
                 yield return current;
-                previous = current;
+                _participant = current;
             }
 
             try
             {
-                await Task.Delay(options.Value.FeedFrequency, cancellationToken);
+                await Task.Delay(frequency, cancellationToken);
             }
             catch (TaskCanceledException)
             {
@@ -72,16 +130,16 @@ internal sealed class EurovisionFeed(
         }
     }
 
-    private async Task<IReadOnlyList<string>> GetArticlesAsync(IPage page)
+    private async Task<IReadOnlyList<string>> GetArticlesAsync(IPage page, string selector)
     {
         try
         {
-            var locator = page.Locator(options.Value.ArticleSelector);
+            var locator = page.Locator(selector);
             return await locator.AllInnerTextsAsync();
         }
         catch (Exception ex)
         {
-            console.WriteException(ex);
+            _console.WriteException(ex);
             return [];
         }
     }

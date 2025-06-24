@@ -47,6 +47,14 @@ internal sealed class App(
 
         var app = provider.GetRequiredService<App>();
 
+        var reloadFrequency = TimeSpan.FromMinutes(5);
+
+        using var timer = new Timer(
+            static (state) => ((IConfigurationRoot)state!).Reload(),
+            configuration,
+            reloadFrequency,
+            reloadFrequency);
+
         return await app.RunAsync(cancellationToken) ? 0 : 1;
     }
 

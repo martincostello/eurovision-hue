@@ -24,7 +24,7 @@ public sealed class EurovisionFeedTests(
         var target = new EurovisionFeed(
             Application.Console,
             Application.TimeProvider,
-            Options.Create(options));
+            new AppOptionsSnapshot(options));
 
         var actual = new List<Participant>();
 
@@ -40,5 +40,26 @@ public sealed class EurovisionFeedTests(
         // Assert
         actual.ShouldNotBeEmpty();
         actual.Distinct().Count().ShouldBeGreaterThanOrEqualTo(1);
+    }
+
+    private sealed class AppOptionsSnapshot(AppOptions options) : IOptionsMonitor<AppOptions>
+    {
+        private Action<AppOptions, string?>? _onChange;
+
+        public AppOptions CurrentValue { get; private set; } = options;
+
+        public void Change(AppOptions options)
+        {
+            CurrentValue = options;
+            _onChange?.Invoke(CurrentValue, null);
+        }
+
+        public AppOptions Get(string? name) => CurrentValue;
+
+        public IDisposable? OnChange(Action<AppOptions, string?> listener)
+        {
+            _onChange = listener;
+            return null;
+        }
     }
 }
