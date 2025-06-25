@@ -15,6 +15,8 @@ internal sealed class AppOptions
 
     public string ArticleSelector { get; set; } = string.Empty;
 
+    public string ConfigurationGistId { get; set; } = string.Empty;
+
     public TimeSpan DiscoveryTimeout { get; set; } = TimeSpan.FromSeconds(10);
 
     public TimeSpan FeedFrequency { get; set; } = TimeSpan.FromSeconds(10);
@@ -24,6 +26,8 @@ internal sealed class AppOptions
     public string HueToken { get; set; } = string.Empty;
 
     public IList<Guid> LightIds { get; set; } = [];
+
+    public TimeSpan ReloadFrequency { get; set; } = TimeSpan.FromMinutes(5);
 
     internal string UserSettings { get; set; } = "usersettings.json";
 

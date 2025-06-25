@@ -62,4 +62,30 @@ public sealed class AppFixture(ITestOutputHelper outputHelper) : IDisposable
 
         builder.RegisterWith(HttpInterception);
     }
+
+    public void RegisterGitHubGist(
+        string gistId,
+        string feedUrl,
+        string articleSelector)
+    {
+        HttpInterception.RegisterGetJson(
+            $"https://api.github.com/gists/{gistId}",
+            new JsonObject
+            {
+                ["files"] = new JsonObject()
+                {
+                    ["eurovision-feed.json"] = new JsonObject
+                    {
+                        ["type"] = "application/json",
+                        ["content"] =
+                            $$"""
+                              {
+                                "{{nameof(AppOptions.FeedUrl)}}": "{{feedUrl}}",
+                                "{{nameof(AppOptions.ArticleSelector)}}": "{{articleSelector}}"
+                              }
+                              """,
+                    },
+                },
+            });
+    }
 }

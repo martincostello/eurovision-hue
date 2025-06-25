@@ -29,6 +29,11 @@ public sealed class AppTests(
         Application.RegisterGetLights(lights);
         Application.RegisterPutLight(lightId);
 
+        Application.RegisterGitHubGist(
+            "5ac0a49cd687c073ec09f4172c37185f",
+            Browser.FeedUrl,
+            Browser.ArticleSelector);
+
         using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(15));
         using var combined = CancellationTokenSource.CreateLinkedTokenSource(timeout.Token, Application.CancellationToken);
 
@@ -45,10 +50,9 @@ public sealed class AppTests(
 
                 services.AddOptions<AppOptions>().PostConfigure((options) =>
                 {
-                    options.ArticleSelector = Browser.ArticleSelector;
-                    options.FeedUrl = Browser.FeedUrl;
                     options.HueToken = Application.HueToken;
                     options.LightIds = [lightId];
+                    options.ReloadFrequency = TimeSpan.FromSeconds(1);
                 });
             },
             combined.Token);
