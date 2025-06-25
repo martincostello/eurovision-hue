@@ -12,6 +12,8 @@ internal sealed record Participant(
     string Emoji,
     IReadOnlyList<string>? AlternateNames = default) : IEquatable<Participant>
 {
+    public static readonly Participant Unknown = new("EUR", "Unknown", "🇪🇺");
+
     private List<Color>? _colors;
 
     public IReadOnlyList<string> Names { get; } = [Name, .. AlternateNames ?? []];

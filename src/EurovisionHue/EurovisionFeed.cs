@@ -110,7 +110,9 @@ internal sealed class EurovisionFeed : IDisposable
                 }
             }
 
-            if (current is not null && current != _participant)
+            current ??= Participant.Unknown;
+
+            if (current != _participant)
             {
                 var now = _timeProvider.GetLocalNow();
                 _console.WriteLine($"[{now:t}] Found {current.Emoji} {current.Name}");
