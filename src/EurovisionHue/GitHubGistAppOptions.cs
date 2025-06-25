@@ -9,16 +9,20 @@ internal sealed class GitHubGistAppOptions(GitHubGistConfiguration configuration
 {
     public void PostConfigure(string? name, AppOptions options)
     {
-        if (!string.IsNullOrWhiteSpace(options.ConfigurationGistId))
+        if (!string.IsNullOrWhiteSpace(options.ConfigurationGistId) &&
+            (string.IsNullOrWhiteSpace(options.ArticleSelector) ||
+             string.IsNullOrWhiteSpace(options.FeedUrl)))
         {
             (var feedUrl, var articleSelector) = configuration.Get(options.ConfigurationGistId);
 
-            if (!string.IsNullOrWhiteSpace(feedUrl))
+            if (!string.IsNullOrWhiteSpace(feedUrl) &&
+                string.IsNullOrWhiteSpace(options.FeedUrl))
             {
                 options.FeedUrl = feedUrl;
             }
 
-            if (!string.IsNullOrWhiteSpace(articleSelector))
+            if (!string.IsNullOrWhiteSpace(articleSelector) &&
+                string.IsNullOrWhiteSpace(options.ArticleSelector))
             {
                 options.ArticleSelector = articleSelector;
             }
