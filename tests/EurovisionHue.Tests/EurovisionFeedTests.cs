@@ -21,10 +21,12 @@ public sealed class EurovisionFeedTests(
             FeedUrl = Browser.FeedUrl,
         };
 
+        var monitor = new AppOptionsMonitor(options);
+
         var target = new EurovisionFeed(
             Application.Console,
             Application.TimeProvider,
-            new AppOptionsSnapshot(options));
+            monitor);
 
         var actual = new List<Participant>();
 
@@ -35,14 +37,21 @@ public sealed class EurovisionFeedTests(
         await foreach (var participant in target.ParticipantsAsync(combined.Token).WithCancellation(combined.Token))
         {
             actual.Add(participant);
+
+            monitor.Change(new()
+            {
+                ArticleSelector = Browser.InvalidArticleSelector,
+                FeedUrl = Browser.InvalidFeedUrl,
+            });
         }
 
         // Assert
         actual.ShouldNotBeEmpty();
         actual.Distinct().Count().ShouldBeGreaterThanOrEqualTo(1);
+        actual.Last().Id.ShouldBe("EUR");
     }
 
-    private sealed class AppOptionsSnapshot(AppOptions options) : IOptionsMonitor<AppOptions>
+    private sealed class AppOptionsMonitor(AppOptions options) : IOptionsMonitor<AppOptions>
     {
         private Action<AppOptions, string?>? _onChange;
 
