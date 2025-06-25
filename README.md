@@ -54,7 +54,7 @@ export ArticleSelector="article[data-testid='content-post']"
 > during the Eurovision Song Contest if you have not manually changed the settings.
 >
 > This is useful if the feed URL changes during an event without users needing to reconfigure
-> or rebuild their local copy of the application after it has been started. If the feed confiruation
+> or rebuild their local copy of the application after it has been started. If the feed configuration
 > is changed remotely, the application should automatically observe the change within 5 minutes.
 
 ## Running with Docker
