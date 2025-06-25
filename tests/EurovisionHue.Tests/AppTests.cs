@@ -52,6 +52,7 @@ public sealed class AppTests(
                 {
                     options.HueToken = Application.HueToken;
                     options.LightIds = [lightId];
+                    options.ReloadFrequency = TimeSpan.FromSeconds(1);
                 });
             },
             combined.Token);
