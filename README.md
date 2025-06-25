@@ -48,6 +48,15 @@ export FeedUrl="https://www.bbc.co.uk/news/live/c74n9n5l1nxt"
 export ArticleSelector="article[data-testid='content-post']"
 ```
 
+> [!NOTE]
+> The feed can also be reconfigured by the owner of this project via an edit to
+> [this GitHub Gist](https://gist.github.com/martincostello/5ac0a49cd687c073ec09f4172c37185f)
+> during the Eurovision Song Contest if you have not manually changed the settings.
+>
+> This is useful if the feed URL changes during an event without users needing to reconfigure
+> or rebuild their local copy of the application after it has been started. If the feed configuration
+> is changed remotely, the application should automatically observe the change within 5 minutes.
+
 ## Running with Docker
 
 To run the application using Docker, you will need to have [Docker][docker] installed.
