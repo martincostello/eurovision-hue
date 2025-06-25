@@ -13,10 +13,13 @@ namespace MartinCostello.EurovisionHue;
 
 internal sealed class App(
     LightsClientFactory clientFactory,
+    IConfigurationRoot configuration,
     IAnsiConsole console,
     EurovisionFeed feed,
-    IOptions<AppOptions> options)
+    IOptions<AppOptions> options) : IAsyncDisposable, IDisposable
 {
+    private Timer? _reloadTimer;
+
     public static async Task<int> RunAsync(
         Action<IServiceCollection> configure,
         CancellationToken cancellationToken)
@@ -45,15 +48,7 @@ internal sealed class App(
 
         using var provider = services.BuildServiceProvider();
 
-        var app = provider.GetRequiredService<App>();
-
-        var reloadFrequency = TimeSpan.FromMinutes(5);
-
-        using var timer = new Timer(
-            static (state) => ((IConfigurationRoot)state!).Reload(),
-            configuration,
-            reloadFrequency,
-            reloadFrequency);
+        await using var app = provider.GetRequiredService<App>();
 
         return await app.RunAsync(cancellationToken) ? 0 : 1;
     }
@@ -94,6 +89,16 @@ internal sealed class App(
 
         console.WriteLine();
 
+        if (!string.IsNullOrEmpty(settings.ConfigurationGistId) &&
+            settings.ReloadFrequency is { Ticks: > 0 } frequency)
+        {
+            _reloadTimer = new Timer(
+                static (state) => ((IConfigurationRoot)state!).Reload(),
+                configuration,
+                frequency,
+                frequency);
+        }
+
         try
         {
             await foreach (var participant in feed.ParticipantsAsync(cancellationToken).WithCancellation(cancellationToken))
@@ -121,5 +126,15 @@ internal sealed class App(
         }
 
         return true;
+    }
+
+    public void Dispose() => _reloadTimer?.Dispose();
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_reloadTimer is { } timer)
+        {
+            await timer.DisposeAsync();
+        }
     }
 }

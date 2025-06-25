@@ -1,58 +1,41 @@
 ﻿// Copyright (c) Martin Costello, 2025. All rights reserved.
 // Licensed under the Apache 2.0 license. See the LICENSE file in the project root for full license information.
 
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
-using System.Text.Json.Nodes;
+using System.Text.Json.Serialization;
 using Spectre.Console;
 
 namespace MartinCostello.EurovisionHue;
 
-internal sealed class GitHubGistConfiguration(HttpClient client, IAnsiConsole console)
+internal sealed partial class GitHubGistConfiguration(HttpClient client, IAnsiConsole console)
 {
     public (string? FeedUrl, string? ArticleSelector) Get(string id, CancellationToken cancellationToken = default)
     {
         string? feedUrl = null;
         string? articleSelector = null;
 
-        if (GetGist(id, cancellationToken) is JsonObject gist &&
-            gist.TryGetPropertyValue("files", out var files) &&
-            files is JsonObject files2)
+        if (GetGist(id, cancellationToken) is { Files.Count: > 0 } gist)
         {
-            foreach ((_, var file) in files2)
+            foreach ((_, var file) in gist.Files)
             {
-                if (file is not JsonObject fileObject ||
-                    !fileObject.TryGetPropertyValue("type", out var type) ||
-                    type is null ||
-                    type.GetValueKind() != JsonValueKind.String ||
-                    type.GetValue<string>() is not "application/json")
+                if (file.Type is not "application/json" || string.IsNullOrWhiteSpace(file.Content))
                 {
                     continue;
                 }
 
-                if (!fileObject.TryGetPropertyValue("content", out var content) ||
-                    content is not JsonValue contentValue ||
-                    contentValue.GetValueKind() != JsonValueKind.String)
+                try
                 {
-                    continue;
+                    var feed = JsonSerializer.Deserialize<FeedConfiguration>(
+                        file.Content,
+                        GitHubJsonSerializerContext.Default.FeedConfiguration);
+
+                    feedUrl ??= feed?.FeedUrl;
+                    articleSelector ??= feed?.ArticleSelector;
                 }
-
-                var json = contentValue.GetValue<string>();
-
-                if (JsonObject.Parse(json) is JsonObject config)
+                catch (JsonException ex)
                 {
-                    if (config.TryGetPropertyValue(nameof(AppOptions.FeedUrl), out var feedUrlValue) &&
-                        feedUrlValue is JsonValue feedUrlJson &&
-                        feedUrlJson.GetValueKind() == JsonValueKind.String)
-                    {
-                        feedUrl = feedUrlJson.GetValue<string>();
-                    }
-
-                    if (config.TryGetPropertyValue(nameof(AppOptions.ArticleSelector), out var articleSelectorValue) &&
-                        articleSelectorValue is JsonValue articleSelectorJson &&
-                        articleSelectorJson.GetValueKind() == JsonValueKind.String)
-                    {
-                        articleSelector = articleSelectorJson.GetValue<string>();
-                    }
+                    console.WriteException(ex);
                 }
             }
         }
@@ -60,7 +43,7 @@ internal sealed class GitHubGistConfiguration(HttpClient client, IAnsiConsole co
         return (feedUrl, articleSelector);
     }
 
-    private JsonObject? GetGist(string id, CancellationToken cancellationToken = default)
+    private Gist? GetGist(string id, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -75,14 +58,7 @@ internal sealed class GitHubGistConfiguration(HttpClient client, IAnsiConsole co
 
             using var stream = response.Content.ReadAsStream(cancellationToken);
 
-            var json = JsonNode.Parse(stream);
-
-            if (json is not JsonObject gist)
-            {
-                return null;
-            }
-
-            return gist;
+            return JsonSerializer.Deserialize<Gist>(stream, GitHubJsonSerializerContext.Default.Gist);
         }
         catch (Exception ex)
         {
@@ -90,4 +66,33 @@ internal sealed class GitHubGistConfiguration(HttpClient client, IAnsiConsole co
             return null;
         }
     }
+
+    private sealed class FeedConfiguration
+    {
+        [JsonPropertyName(nameof(AppOptions.ArticleSelector))]
+        public string? ArticleSelector { get; set; }
+
+        [JsonPropertyName(nameof(AppOptions.FeedUrl))]
+        public string? FeedUrl { get; set; }
+    }
+
+    private sealed class Gist
+    {
+        [JsonPropertyName("files")]
+        public IDictionary<string, GistFile>? Files { get; set; }
+    }
+
+    private sealed class GistFile
+    {
+        [JsonPropertyName("type")]
+        public string? Type { get; set; }
+
+        [JsonPropertyName("content")]
+        public string? Content { get; set; }
+    }
+
+    [ExcludeFromCodeCoverage]
+    [JsonSerializable(typeof(FeedConfiguration))]
+    [JsonSerializable(typeof(Gist))]
+    private sealed partial class GitHubJsonSerializerContext : JsonSerializerContext;
 }

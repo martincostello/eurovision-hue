@@ -18,7 +18,7 @@ internal static class ServiceCollectionExtensions
 
     public static IServiceCollection AddEurovisionHue(
         this IServiceCollection services,
-        IConfiguration configuration)
+        IConfigurationRoot configuration)
     {
         services.AddSingleton<App>()
                 .AddSingleton<EurovisionFeed>()
@@ -26,6 +26,7 @@ internal static class ServiceCollectionExtensions
                 .AddSingleton<LightsClientFactory>()
                 .AddSingleton(AnsiConsole.Console)
                 .AddSingleton(TimeProvider.System)
+                .AddSingleton(configuration)
                 .AddTransient<IPostConfigureOptions<AppOptions>, GitHubGistAppOptions>();
 
         services.Configure<AppOptions>(configuration);

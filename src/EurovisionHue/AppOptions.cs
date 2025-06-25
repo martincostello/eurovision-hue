@@ -27,6 +27,8 @@ internal sealed class AppOptions
 
     public IList<Guid> LightIds { get; set; } = [];
 
+    public TimeSpan ReloadFrequency { get; set; } = TimeSpan.FromMinutes(5);
+
     internal string UserSettings { get; set; } = "usersettings.json";
 
     public async Task SaveAsync(CancellationToken cancellationToken)
