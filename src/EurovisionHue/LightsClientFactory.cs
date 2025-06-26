@@ -40,6 +40,7 @@ internal class LightsClientFactory(
         {
             bridge = bridges[0];
             console.MarkupLineInterpolated($"Found Hue bridge at [link={bridge.IpAddress}]{bridge.Url}[/].");
+            console.WriteLine();
         }
         else
         {
@@ -62,7 +63,13 @@ internal class LightsClientFactory(
         {
             var confirmed = console.Prompt(
                 new ConfirmationPrompt(
-                    "Press the button on the Hue bridge to connect."));
+                    string.Join(
+                        Environment.NewLine,
+                        [
+                            "The button on the Hue bridge needs to be pressed to connect to your lights.",
+                            string.Empty,
+                            "Press the button on the bridge [bold]first[/], then press [green]Enter[/] to continue.",
+                        ])));
 
             if (!confirmed)
             {
