@@ -6,12 +6,19 @@ WORKDIR /source
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
+RUN apt-get update \
+    && apt-get install gpg --yes \
+    && curl -sSL --retry 5 https://dot.net/v1/dotnet-install.asc --output dotnet-install.asc \
+    && gpg --import dotnet-install.asc \
+    && rm dotnet-install.asc
+
 RUN curl -sSL --retry 5 https://dot.net/v1/dotnet-install.sh --output dotnet-install.sh \
-    && echo "SHA512: $(sha512sum dotnet-install.sh)" \
-    && echo "f8c59166ed912d6861e93c3efc2840be31ec32897679678a72f781423ebf061348d3b92b16c9541f5b312a34160f452826bb3021efb1414d76bd7e237e4c0e9a  dotnet-install.sh" | sha512sum -c \
+    && curl -sSL --retry 5 https://dot.net/v1/dotnet-install.sig --output dotnet-install.sig \
+    && gpg --verify dotnet-install.sig dotnet-install.sh \
     && chmod +x ./dotnet-install.sh \
     && ./dotnet-install.sh --jsonfile ./global.json --install-dir /usr/share/dotnet \
-    && rm dotnet-install.sh
+    && rm dotnet-install.sh \
+    && rm dotnet-install.sig
 
 RUN --mount=type=cache,id=nuget,target=/root/.nuget/packages \
     dotnet publish ./src/EurovisionHue --arch "${TARGETARCH}" --output /app
