@@ -61,33 +61,30 @@ export ArticleSelector="article[data-testid='content-post']"
 
 To run the application using Docker, you will need to have [Docker][docker] installed.
 
-First, clone the repository to your local machine:
+First, pull the latest image for the application to your local machine:
 
 ```terminal
-git clone https://github.com/martincostello/eurovision-hue.git
-cd eurovision-hue
-```
-
-Next, build the Docker image for the application by running the following command in a terminal:
-
-```terminal
-docker build --tag eurovision-hue .
+docker pull ghcr.io/martincostello/eurovision-hue:main
 ```
 
 Finally, run the application using the following command:
 
 ```terminal
-docker run --interactive --tty --rm --mount type=volume,src=eurovision-hue,dst=/app/MartinCostello/EurovisionHue eurovision-hue
+docker run --interactive --tty --rm --mount type=volume,src=eurovision-hue,dst=/app/MartinCostello/EurovisionHue ghcr.io/martincostello/eurovision-hue:main
 ```
 
 The `eurovision-hue` volume is used to persist the configuration of the application between runs.
 
 ### Demo
 
+> [!NOTE]
+> To run the demo, you will need to either clone this repository locally, or download the
+> [demo HTML file](https://raw.githubusercontent.com/martincostello/eurovision-hue/main/demo.html).
+
 To run a demo of the application using Docker, you can use the following command:
 
 ```terminal
-docker run --env ArticleSelector="td:nth-child(2)" --env FeedUrl="file:///app/demo.html" --interactive --tty --rm --mount type=volume,src=eurovision-hue,dst=/app/MartinCostello/EurovisionHue --volume ./demo.html:/app/demo.html eurovision-hue
+docker run --env ArticleSelector="td:nth-child(2)" --env FeedUrl="file:///app/demo.html" --interactive --tty --rm --mount type=volume,src=eurovision-hue,dst=/app/MartinCostello/EurovisionHue --mount type=bind,source=./demo.html,target=/app/demo.html ghcr.io/martincostello/eurovision-hue:main
 ```
 
 This command will run the application in a mode where your selected Hue lights will randomly change
