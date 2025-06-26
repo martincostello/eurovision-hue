@@ -8,12 +8,13 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 RUN apt-get update \
     && apt-get install gpg --yes \
-    && curl -sSL --retry 5 https://dot.net/v1/dotnet-install.asc --output dotnet-install.asc \
+    && rm --recursive --force /var/lib/apt/lists/* \
+    && curl --silent --show-error --location --retry 5 https://dot.net/v1/dotnet-install.asc --output dotnet-install.asc \
     && gpg --import dotnet-install.asc \
     && rm dotnet-install.asc
 
-RUN curl -sSL --retry 5 https://dot.net/v1/dotnet-install.sh --output dotnet-install.sh \
-    && curl -sSL --retry 5 https://dot.net/v1/dotnet-install.sig --output dotnet-install.sig \
+RUN curl --silent --show-error --location --retry 5 https://dot.net/v1/dotnet-install.sh --output dotnet-install.sh \
+    && curl --silent --show-error --location --retry 5 https://dot.net/v1/dotnet-install.sig --output dotnet-install.sig \
     && gpg --verify dotnet-install.sig dotnet-install.sh \
     && chmod +x ./dotnet-install.sh \
     && ./dotnet-install.sh --jsonfile ./global.json --install-dir /usr/share/dotnet \
