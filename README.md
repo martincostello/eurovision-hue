@@ -84,7 +84,7 @@ The `eurovision-hue` volume is used to persist the configuration of the applicat
 To run a demo of the application using Docker, you can use the following command:
 
 ```terminal
-docker run --env ArticleSelector="td:nth-child(2)" --env FeedUrl="file:///app/demo.html" --interactive --tty --rm --mount type=volume,src=eurovision-hue,dst=/app/MartinCostello/EurovisionHue --volume ./demo.html:/app/demo.html ghcr.io/martincostello/eurovision-hue:main
+docker run --env ArticleSelector="td:nth-child(2)" --env FeedUrl="file:///app/demo.html" --interactive --tty --rm --mount type=volume,src=eurovision-hue,dst=/app/MartinCostello/EurovisionHue --mount type=bind,source=./demo.html,target=/app/demo.html ghcr.io/martincostello/eurovision-hue:main
 ```
 
 This command will run the application in a mode where your selected Hue lights will randomly change
