@@ -88,3 +88,8 @@ jobs:
       with:
         flags: ${{ matrix.os-name }}
         token: ${{ secrets.CODECOV_TOKEN }}
+
+    - name: Build container image
+      if: runner.os == 'Linux'
+      shell: pwsh
+      run: docker build .
