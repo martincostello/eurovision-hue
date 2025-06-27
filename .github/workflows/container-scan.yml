@@ -1,0 +1,132 @@
+name: container-scan
+
+on:
+  schedule:
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+permissions: {}
+
+env:
+  FORCE_COLOR: 3
+  TERM: xterm
+
+jobs:
+  scan-image:
+    runs-on: ubuntu-latest
+    if: github.event.repository.fork == false
+
+    concurrency:
+      group: ${{ github.workflow }}
+      cancel-in-progress: false
+
+    permissions:
+      contents: read
+      security-events: write
+
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          filter: 'tree:0'
+          persist-credentials: false
+          show-progress: false
+
+      - name: Configure Trivy
+        id: configure
+        shell: pwsh
+        env:
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+        run: |
+          $image = "ghcr.io/${env:GITHUB_REPOSITORY}:${env:DEFAULT_BRANCH}"
+          "container-image=${image}" >> ${env:GITHUB_OUTPUT}
+
+      - name: Run Trivy (SARIF)
+        uses: aquasecurity/trivy-action@76071ef0d7ec797419534a183b498b4d6366cf37 # 0.31.0
+        env:
+          TRIVY_DB_REPOSITORY: public.ecr.aws/aquasecurity/trivy-db:2
+        with:
+          format: sarif
+          ignore-unfixed: true
+          image-ref: ${{ steps.configure.outputs.container-image }}
+          limit-severities-for-sarif: true
+          output: trivy.sarif
+          severity: CRITICAL,HIGH
+
+      - name: Upload Trivy scan results
+        uses: github/codeql-action/upload-sarif@39edc492dbe16b1465b0cafca41432d857bdb31a # v3.29.1
+        if: ${{ !cancelled() }}
+        with:
+          sarif_file: trivy.sarif
+
+      - name: Run Trivy (JSON)
+        uses: aquasecurity/trivy-action@76071ef0d7ec797419534a183b498b4d6366cf37 # 0.31.0
+        env:
+          TRIVY_DB_REPOSITORY: public.ecr.aws/aquasecurity/trivy-db:2
+        with:
+          image-ref: ${{ steps.configure.outputs.container-image }}
+          format: json
+          ignore-unfixed: true
+          output: trivy.json
+          severity: CRITICAL,HIGH
+
+      - name: Check for vulnerabilities
+        id: check-for-vulnerabilities
+        shell: pwsh
+        run: |
+          $report = Get-Content ./trivy.json | Out-String | ConvertFrom-Json
+
+          $vulnerabilities = @()
+          $hasVulnerabilities = $false
+
+          foreach ($target in $report.Results) {
+            foreach ($vulnerability in $target.Vulnerabilities) {
+              $vulnerabilities += $vulnerability
+              # Ignore vulnerabilities in the .NET application itself as a rebuild of the container won't fix these
+              if ($target.Type -ne "dotnet-core") {
+                $hasVulnerabilities = $true
+              }
+            }
+          }
+
+          "has-vulnerabilities=${hasVulnerabilities}".ToLowerInvariant() >> ${env:GITHUB_OUTPUT}
+
+          $report = @(
+            "# Container Image Vulnerability Report",
+            ""
+          )
+
+          if ($vulnerabilities.Length -eq 0) {
+            $report += ":closed_lock_with_key: No vulnerabilities found."
+          } else {
+            $report += "| Library | Vulnerability | Severity | Status | Installed Version | Fixed Version | Title |"
+            $report += "|:--------|:--------------|:---------|:-------|:------------------|:--------------|:------|"
+
+            foreach ($vulnerability in $vulnerabilities) {
+              $title = $vulnerability.Title
+              if ([string]::IsNullOrEmpty($title)) {
+                $title = $vulnerability.Description
+              }
+
+              $fixedVersion = $vulnerability.FixedVersion
+              if ([string]::IsNullOrEmpty($fixedVersion)) {
+                $fixedVersion = "N/A"
+              }
+
+              $report += "| $($vulnerability.PkgName) | $($vulnerability.VulnerabilityID) | $($vulnerability.Severity) | $($vulnerability.Status) | $($vulnerability.InstalledVersion) | ${fixedVersion} | [${title}]($($vulnerability.PrimaryURL)) |"
+            }
+          }
+
+          $report += ""
+          $report += ""
+
+          ($report -Join "`n") >> ${env:GITHUB_STEP_SUMMARY}
+
+      - name: Rebuild if any vulnerabilities found
+        if: |
+          github.event_name == 'schedule' &&
+          steps.check-for-vulnerabilities.outputs.has-vulnerabilities == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.COSTELLOBOT_TOKEN }}
+        run: gh workflow run build.yml
