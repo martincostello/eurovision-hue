@@ -60,6 +60,7 @@ internal static class Participants
         new("UKR", "Ukraine", "🇺🇦"),
         new("GBR", "United Kingdom", "🇬🇧"),
         new("USA", "United States", "🇺🇸"),
+        new("CAN", "Canada", "🇨🇦"),
     ];
 
     private static readonly Dictionary<string, Participant> _names;
