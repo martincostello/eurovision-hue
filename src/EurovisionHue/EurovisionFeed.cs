@@ -18,7 +18,6 @@ internal sealed class EurovisionFeed : IDisposable
     private CancellationTokenSource _reloaded;
     private string _feedUrl;
     private string _selector;
-    private Participant? _participant;
 
     public EurovisionFeed(
         IAnsiConsole console,
@@ -112,13 +111,12 @@ internal sealed class EurovisionFeed : IDisposable
 
             current ??= Participant.Unknown;
 
-            if (current != _participant)
+            if (current != null)
             {
                 var now = _timeProvider.GetLocalNow();
                 _console.WriteLine($"[{now:t}] Found {current.Emoji} {current.Name}");
 
                 yield return current;
-                _participant = current;
             }
 
             try

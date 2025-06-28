@@ -59,6 +59,7 @@ internal static class Participants
         new("TUR", "Turkey", "🇹🇷", ["Turkiye", "Türkiye"]),
         new("UKR", "Ukraine", "🇺🇦"),
         new("GBR", "United Kingdom", "🇬🇧"),
+        new("USA", "United States", "🇺🇸"),
     ];
 
     private static readonly Dictionary<string, Participant> _names;

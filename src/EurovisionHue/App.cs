@@ -112,7 +112,7 @@ internal sealed class App(
                         {
                             var colors = participant.Colors(lights.Count);
 
-                            foreach ((var index, var light) in lights.Index())
+                            foreach ((var index, var light) in lights.OrderBy(_ => Guid.NewGuid()).Index())
                             {
                                 var color = colors[index % colors.Count];
                                 await client.ChangeAsync(light, color);
