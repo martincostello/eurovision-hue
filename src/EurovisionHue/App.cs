@@ -16,6 +16,7 @@ internal sealed class App(
     IConfigurationRoot configuration,
     IAnsiConsole console,
     EurovisionFeed feed,
+    Random random,
     IOptions<AppOptions> options) : IAsyncDisposable, IDisposable
 {
     private Timer? _reloadTimer;
@@ -112,7 +113,11 @@ internal sealed class App(
                         {
                             var colors = participant.Colors(lights.Count);
 
-                            foreach ((var index, var light) in lights.Index())
+                            Light[] shuffled = [.. lights];
+
+                            random.Shuffle(shuffled);
+
+                            foreach ((var index, var light) in shuffled.Index())
                             {
                                 var color = colors[index % colors.Count];
                                 await client.ChangeAsync(light, color);

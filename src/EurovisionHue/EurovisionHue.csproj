@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Description>A .NET Global Tool that updates Hue lights to follow the Eurovision Song Contest.</Description>
+    <NoWarn>$(NoWarn);CA5394</NoWarn>
     <OutputType>Exe</OutputType>
 	  <RootNamespace>MartinCostello.EurovisionHue</RootNamespace>
     <TargetFramework>net9.0</TargetFramework>

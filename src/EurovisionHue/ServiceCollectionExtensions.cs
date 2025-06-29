@@ -25,6 +25,7 @@ internal static class ServiceCollectionExtensions
                 .AddSingleton<GitHubGistConfiguration>()
                 .AddSingleton<LightsClientFactory>()
                 .AddSingleton(AnsiConsole.Console)
+                .AddSingleton(Random.Shared)
                 .AddSingleton(TimeProvider.System)
                 .AddSingleton(configuration)
                 .AddTransient<IPostConfigureOptions<AppOptions>, GitHubGistAppOptions>();
