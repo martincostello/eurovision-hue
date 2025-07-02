@@ -6,7 +6,7 @@
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build",
-      "program": "${workspaceFolder}/src/EurovisionHue/bin/Debug/net9.0/EurovisionHue.dll",
+      "program": "${workspaceFolder}/src/EurovisionHue/bin/Debug/net10.0/EurovisionHue.dll",
       "args": [],
       "cwd": "${workspaceFolder}/src/EurovisionHue",
       "stopAtEntry": false
