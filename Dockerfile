@@ -22,13 +22,13 @@ RUN curl --silent --show-error --location --retry 5 https://dot.net/v1/dotnet-in
     && rm dotnet-install.sig
 
 RUN --mount=type=cache,id=nuget,target=/root/.nuget/packages \
-    dotnet publish ./src/EurovisionHue --arch "${TARGETARCH}" --output /app
+    dotnet publish ./src/EurovisionHue --arch "${TARGETARCH}" --output /app --self-contained
 
-FROM mcr.microsoft.com/dotnet/runtime:9.0.6-noble@sha256:bbf6472d8b38879c7c179783c8e5645c14c1ff8eee0d3045dc52dc3c53ec6b92 AS final
+FROM mcr.microsoft.com/dotnet/runtime-deps:9.0.6-noble@sha256:44cae5eafd215b9c22be806dd904364a77caceaa96f24cceb0e9e709486d50f8 AS final
 
 WORKDIR /app
 COPY --from=build /app .
 
-RUN dotnet EurovisionHue.dll --install-deps
+RUN ./EurovisionHue --install-deps
 
-ENTRYPOINT ["dotnet", "EurovisionHue.dll"]
+ENTRYPOINT ["./EurovisionHue"]
