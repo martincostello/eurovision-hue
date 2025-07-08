@@ -24,7 +24,7 @@ RUN curl --silent --show-error --location --retry 5 https://dot.net/v1/dotnet-in
 RUN --mount=type=cache,id=nuget,target=/root/.nuget/packages \
     dotnet publish ./src/EurovisionHue --arch "${TARGETARCH}" --output /app --self-contained
 
-FROM mcr.microsoft.com/dotnet/runtime-deps:9.0.6-noble@sha256:73ec6125fa7a6c3d1d6cf51512130fbe4c996e0dbc1ed9c7486467ca2fe3069b AS final
+FROM mcr.microsoft.com/dotnet/runtime-deps:9.0.6-noble@sha256:dc2591f7d389a1da3725568bc106dd62c0d3a93248ca6df2f76f18139cdc1f95 AS final
 
 WORKDIR /app
 COPY --from=build /app .
