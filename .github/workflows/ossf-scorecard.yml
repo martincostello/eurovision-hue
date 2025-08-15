@@ -1,4 +1,4 @@
-name: ossf-scorecard
+name: ossf-scorecard # zizmor: ignore[excessive-permissions] Recommended permissions for OSSF Scorecard
 
 on:
   branch_protection_rule:
