@@ -1,4 +1,4 @@
-name: ossf-scorecard # zizmor: ignore[excessive-permissions] Recommended permissions for OSSF Scorecard
+name: ossf-scorecard
 
 on:
   branch_protection_rule:
@@ -8,7 +8,7 @@ on:
     - cron: '0 5 * * MON'
   workflow_dispatch:
 
-permissions: read-all
+permissions: read-all # zizmor: ignore[excessive-permissions] Recommended permissions for OSSF Scorecard
 
 jobs:
   analysis:
