@@ -19,7 +19,7 @@ internal sealed class LightsClient(
 
     public async Task<IReadOnlyList<Light>> GetLightsAsync()
     {
-        var response = await _client.GetLightsAsync();
+        var response = await _client.Light.GetAllAsync();
         return [.. response.Data.OrderBy((p) => p.Metadata?.Name)];
     }
 
@@ -34,7 +34,7 @@ internal sealed class LightsClient(
               .SetDuration(Duration)
               .TurnOn();
 
-            await _client.UpdateLightAsync(light.Id, request);
+            await _client.Light.UpdateAsync(light.Id, request);
         }
         catch (Exception ex)
         {
