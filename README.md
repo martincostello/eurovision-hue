@@ -1,4 +1,4 @@
-# Eurovision Hue 💡
+# Eurovision Hue 💡🇪🇺🎶
 
 [![Build status][build-badge]][build-status]
 [![codecov][coverage-badge]][coverage-report]
