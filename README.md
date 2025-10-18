@@ -103,6 +103,19 @@ cd eurovision-hue
 ./build.ps1
 ```
 
+## Verifying Container Image Signatures
+
+The container images published for this project are signed using [cosign][cosign]. You
+can verify the signatures using the following command:
+
+```sh
+IMAGE="ghcr.io/martincostello/eurovision-hue:main"
+IDENTITY="https://github.com/martincostello/eurovision-hue/.github/workflows/build.yml@refs/heads/main"
+OIDC_ISSUER="https://token.actions.githubusercontent.com"
+
+cosign verify $IMAGE --certificate-identity $IDENTITY --certificate-oidc-issuer $OIDC_ISSUER
+```
+
 ## Feedback
 
 Any feedback or issues can be added to the issues for this project in [GitHub][issues].
@@ -118,6 +131,7 @@ This project is licensed under the [Apache 2.0][license] license.
 [appsettings]: https://github.com/martincostello/eurovision-hue/blob/f64127b29cb633f1cab383f9f620724efdc97ccc/src/EurovisionHue/appsettings.json
 [build-badge]: https://github.com/martincostello/eurovision-hue/actions/workflows/build.yml/badge.svg?branch=main&event=push
 [build-status]: https://github.com/martincostello/eurovision-hue/actions?query=workflow%3Abuild+branch%3Amain+event%3Apush "Continuous Integration for this project"
+[cosign]: https://github.com/sigstore/cosign "Cosign on GitHub"
 [coverage-badge]: https://codecov.io/gh/martincostello/eurovision-hue/branch/main/graph/badge.svg
 [coverage-report]: https://codecov.io/gh/martincostello/eurovision-hue "Code coverage report for this project"
 [css-selector]: https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_selectors "CSS Selectors on MDN"
