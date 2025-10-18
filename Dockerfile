@@ -1,6 +1,8 @@
 FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:9.0.306@sha256:a5dd7352c0c058a6f847c95a1147b060e95a532444f14b34d8fa9aaa0a76702f AS build
 ARG TARGETARCH
 
+LABEL org.opencontainers.image.description="Update Hue lights to follow along with Eurovision"
+
 COPY . /source
 WORKDIR /source
 
