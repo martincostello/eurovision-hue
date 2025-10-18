@@ -3,7 +3,7 @@
     <Description>Tests for EurovisionHue.</Description>
     <OutputType>Exe</OutputType>
     <RootNamespace>MartinCostello.EurovisionHue</RootNamespace>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <UserSecretsId>MartinCostello.EurovisionHue</UserSecretsId>
     <UseDefaultCodeAnalysisRuleSet>true</UseDefaultCodeAnalysisRuleSet>
   </PropertyGroup>
