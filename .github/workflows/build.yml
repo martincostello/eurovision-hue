@@ -138,6 +138,9 @@ jobs:
         with:
           images: |
             ghcr.io/${{ github.repository }}
+          tags: |
+            type=edge,branch=main
+            type=match,pattern=v(.*),group=1
 
       - name: Build and push container images
         id: push
