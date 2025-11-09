@@ -3,7 +3,6 @@
 **/.dockerignore
 **/.env
 **/.git
-**/.gitignore
 **/.project
 **/.settings
 **/.vs
@@ -27,5 +26,6 @@ README.md
 !.editorconfig
 !.git/HEAD
 !.git/config
+!.git/objects/
 !.git/refs/heads/
 !.packages/
