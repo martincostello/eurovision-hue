@@ -109,7 +109,7 @@ The container images published for this project are signed using [cosign][cosign
 can verify the signatures using the following command:
 
 ```sh
-IMAGE="ghcr.io/martincostello/eurovision-hue:main"
+IMAGE="ghcr.io/martincostello/eurovision-hue:edge"
 IDENTITY="https://github.com/martincostello/eurovision-hue/.github/workflows/build.yml@refs/heads/main"
 OIDC_ISSUER="https://token.actions.githubusercontent.com"
 
