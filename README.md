@@ -64,7 +64,7 @@ To run the application using Docker, you will need to have [Docker][docker] inst
 First, pull the latest image for the application to your local machine:
 
 ```terminal
-docker pull ghcr.io/martincostello/eurovision-hue:main
+docker pull ghcr.io/martincostello/eurovision-hue:edge
 ```
 
 Finally, run the application using the following command:
