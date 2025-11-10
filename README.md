@@ -70,7 +70,7 @@ docker pull ghcr.io/martincostello/eurovision-hue:edge
 Finally, run the application using the following command:
 
 ```terminal
-docker run --interactive --tty --rm --mount type=volume,src=eurovision-hue,dst=/app/MartinCostello/EurovisionHue ghcr.io/martincostello/eurovision-hue:main
+docker run --interactive --tty --rm --mount type=volume,src=eurovision-hue,dst=/app/MartinCostello/EurovisionHue ghcr.io/martincostello/eurovision-hue:edge
 ```
 
 The `eurovision-hue` volume is used to persist the configuration of the application between runs.
@@ -84,7 +84,7 @@ The `eurovision-hue` volume is used to persist the configuration of the applicat
 To run a demo of the application using Docker, you can use the following command:
 
 ```terminal
-docker run --env ArticleSelector="td:nth-child(2)" --env FeedUrl="file:///app/demo.html" --interactive --tty --rm --mount type=volume,src=eurovision-hue,dst=/app/MartinCostello/EurovisionHue --mount type=bind,source=./demo.html,target=/app/demo.html ghcr.io/martincostello/eurovision-hue:main
+docker run --env ArticleSelector="td:nth-child(2)" --env FeedUrl="file:///app/demo.html" --interactive --tty --rm --mount type=volume,src=eurovision-hue,dst=/app/MartinCostello/EurovisionHue --mount type=bind,source=./demo.html,target=/app/demo.html ghcr.io/martincostello/eurovision-hue:edge
 ```
 
 This command will run the application in a mode where your selected Hue lights will randomly change
