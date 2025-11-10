@@ -140,6 +140,11 @@ jobs:
         with:
           images: |
             ghcr.io/${{ github.repository }}
+          labels: |
+            org.opencontainers.image.authors=${{ format('{0}/{1}', github.server_url, github.repository_owner) }}
+            org.opencontainers.image.documentation=${{ format('{0}/{1}/blob/{2}/README.md', github.server_url, github.repository, github.sha) }}
+            org.opencontainers.image.ref.name=${{ github.ref_name }}
+            org.opencontainers.image.vendor=${{ github.repository_owner }}
           tags: |
             type=edge,branch=main
             type=match,pattern=v(.*),group=1
