@@ -1,5 +1,7 @@
 # Eurovision Hue 💡🇪🇺🎶
 
+[![Latest release][latest-version-badge]][latest-version-release]
+
 [![Build status][build-badge]][build-status]
 [![codecov][coverage-badge]][coverage-report]
 [![OpenSSF Scorecard][scorecard-badge]][scorecard-report]
@@ -141,6 +143,8 @@ This project is licensed under the [Apache 2.0][license] license.
 [eurovision]: https://eurovision.tv/ "Eurovision Song Contest"
 [inspiration]: https://github.com/cnorthwood/eurovisionhue "Eurovision Hue by cnorthwood on GitHub"
 [issues]: https://github.com/martincostello/eurovision-hue/issues "Issues for this project on GitHub.com"
+[latest-version-badge]: https://img.shields.io/github/v/release/martincostello/eurovision-hue?display_name=tag&logo=github&label=Latest
+[latest-version-release]: https://github.com/martincostello/eurovision-hue/releases/latest "Latest release for this project on GitHub.com"
 [license]: https://www.apache.org/licenses/LICENSE-2.0.txt "The Apache 2.0 license"
 [philips-hue]: https://www.philips-hue.com/ "Philips Hue"
 [repo]: https://github.com/martincostello/eurovision-hue "This project on GitHub.com"
