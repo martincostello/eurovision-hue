@@ -162,6 +162,7 @@ jobs:
           context: .
           labels: ${{ steps.metadata.outputs.labels }}
           push: true
+          sbom: true
           tags: ${{ steps.metadata.outputs.tags }}
 
       - name: Generate artifact attestation
