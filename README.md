@@ -64,13 +64,13 @@ To run the application using Docker, you will need to have [Docker][docker] inst
 First, pull the latest image for the application to your local machine:
 
 ```terminal
-docker pull ghcr.io/martincostello/eurovision-hue:edge
+docker pull ghcr.io/martincostello/eurovision-hue:latest
 ```
 
 Finally, run the application using the following command:
 
 ```terminal
-docker run --interactive --tty --rm --mount type=volume,src=eurovision-hue,dst=/app/MartinCostello/EurovisionHue ghcr.io/martincostello/eurovision-hue:edge
+docker run --interactive --tty --rm --mount type=volume,src=eurovision-hue,dst=/app/MartinCostello/EurovisionHue ghcr.io/martincostello/eurovision-hue:latest
 ```
 
 The `eurovision-hue` volume is used to persist the configuration of the application between runs.
@@ -84,7 +84,7 @@ The `eurovision-hue` volume is used to persist the configuration of the applicat
 To run a demo of the application using Docker, you can use the following command:
 
 ```terminal
-docker run --env ArticleSelector="td:nth-child(2)" --env FeedUrl="file:///app/demo.html" --interactive --tty --rm --mount type=volume,src=eurovision-hue,dst=/app/MartinCostello/EurovisionHue --mount type=bind,source=./demo.html,target=/app/demo.html ghcr.io/martincostello/eurovision-hue:edge
+docker run --env ArticleSelector="td:nth-child(2)" --env FeedUrl="file:///app/demo.html" --interactive --tty --rm --mount type=volume,src=eurovision-hue,dst=/app/MartinCostello/EurovisionHue --mount type=bind,source=./demo.html,target=/app/demo.html ghcr.io/martincostello/eurovision-hue:latest
 ```
 
 This command will run the application in a mode where your selected Hue lights will randomly change
@@ -109,8 +109,9 @@ The container images published for this project are signed using [cosign][cosign
 can verify the signatures using the following command:
 
 ```sh
-IMAGE="ghcr.io/martincostello/eurovision-hue:edge"
-IDENTITY="https://github.com/martincostello/eurovision-hue/.github/workflows/build.yml@refs/heads/main"
+VERSION="1.0.0"
+IMAGE="ghcr.io/martincostello/eurovision-hue:${VERSION}"
+IDENTITY="https://github.com/martincostello/eurovision-hue/.github/workflows/build.yml@refs/tags/v${VERSION}"
 OIDC_ISSUER="https://token.actions.githubusercontent.com"
 
 cosign verify $IMAGE --certificate-identity $IDENTITY --certificate-oidc-issuer $OIDC_ISSUER
