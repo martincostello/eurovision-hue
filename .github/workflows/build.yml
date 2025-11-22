@@ -124,7 +124,7 @@ jobs:
         shell: pwsh
         run: |
           $gitCommitEpoch = git log -1 --pretty=%ct
-          Write-Output "git-commit-epoch=${gitCommitEpoch}" >> "${env:GITHUB_OUTPUT}"
+          Write-Output "git-commit-epoch=${gitCommitEpoch}" >> ${env:GITHUB_OUTPUT}
 
           $dockerfileLines = Get-Content -Raw -Path "Dockerfile" | Select-String -Pattern 'FROM\s+(.+)' -AllMatches
           $lastFrom = ($dockerfileLines.Matches | ForEach-Object { $_.Groups[1].Value })[-1]
