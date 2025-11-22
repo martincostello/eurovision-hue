@@ -128,7 +128,7 @@ jobs:
 
           $dockerfileLines = Get-Content -Raw -Path "Dockerfile" | Select-String -Pattern 'FROM\s+(.+)' -AllMatches
           $lastFrom = ($dockerfileLines.Matches | ForEach-Object { $_.Groups[1].Value })[-1]
-          if ($lastFrom -match '^(.*?)@sha256:([a-fA-F0-9]+)?(\s.*)?$') {
+          if ($lastFrom -match '^(.*?)@(sha256:[a-fA-F0-9]+)(\s.*)?$') {
             $imageName = $Matches[1]
             $digest = $Matches[2]
             Write-Output "base-image-digest=${digest}" >> ${env:GITHUB_OUTPUT}
