@@ -119,8 +119,8 @@ jobs:
           persist-credentials: false
           show-progress: false
 
-      - name: Get information for image annotations
-        id: get-info-for-annotations
+      - name: Get information for container build
+        id: get-info-for-container
         shell: pwsh
         run: |
           $gitCommitEpoch = git log -1 --pretty=%ct
@@ -155,8 +155,8 @@ jobs:
             ghcr.io/${{ github.repository }}
           labels: |
             org.opencontainers.image.authors=${{ format('{0}/{1}', github.server_url, github.repository_owner) }}
-            org.opencontainers.image.base.digest=${{ steps.get-info-for-annotations.outputs.base-image-digest }}
-            org.opencontainers.image.base.name=${{ steps.get-info-for-annotations.outputs.base-image-name }}
+            org.opencontainers.image.base.digest=${{ steps.get-info-for-container.outputs.base-image-digest }}
+            org.opencontainers.image.base.name=${{ steps.get-info-for-container.outputs.base-image-name }}
             org.opencontainers.image.documentation=${{ format('{0}/{1}/blob/{2}/README.md', github.server_url, github.repository, github.sha) }}
             org.opencontainers.image.ref.name=${{ github.ref_name }}
             org.opencontainers.image.source=${{ format('{0}/{1}', github.server_url, github.repository) }}
@@ -169,7 +169,7 @@ jobs:
         id: push
         uses: docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83 # v6.18.0
         env:
-          SOURCE_DATE_EPOCH: ${{ steps.get-info-for-annotations.outputs.git-commit-epoch }}
+          SOURCE_DATE_EPOCH: ${{ steps.get-info-for-container.outputs.git-commit-epoch }}
         with:
           annotations: ${{ steps.metadata.outputs.annotations }}
           cache-from: type=gha
