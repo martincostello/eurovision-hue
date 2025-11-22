@@ -119,9 +119,21 @@ jobs:
           persist-credentials: false
           show-progress: false
 
-      - name: Get Git commit timestamp
-        shell: bash
-        run: echo "GIT_COMMIT_EPOCH=$(git log -1 --pretty=%ct)" >> "${GITHUB_ENV}"
+      - name: Get information for image annotations
+        id: get-info-for-annotations
+        shell: pwsh
+        run: |
+          $gitCommitEpoch = git log -1 --pretty=%ct
+          echo "git-commit-epoch=${gitCommitEpoch}" >> "${env:GITHUB_OUTPUT}"
+
+          $dockerfileLines = Get-Content -Raw -Path "Dockerfile" | Select-String -Pattern 'FROM\s+(.+)' -AllMatches
+          $lastFrom = ($dockerfileLines.Matches | ForEach-Object { $_.Groups[1].Value })[-1]
+          if ($lastFrom -match '^(.*?)@sha256:([a-fA-F0-9]+)?(\s.*)?$') {
+            $imageName = $Matches[1]
+            $digest = $Matches[2]
+            echo "base-image-digest=${digest}" >> ${env:GITHUB_OUTPUT}
+            echo "base-image-name=${imageName}" >> ${env:GITHUB_OUTPUT}
+          }
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@e468171a9de216ec08956ac3ada2f0791b6bd435 # v3.11.1
@@ -143,6 +155,8 @@ jobs:
             ghcr.io/${{ github.repository }}
           labels: |
             org.opencontainers.image.authors=${{ format('{0}/{1}', github.server_url, github.repository_owner) }}
+            org.opencontainers.image.base.digest=${{ steps.get-info-for-annotations.outputs.base-image-digest }}
+            org.opencontainers.image.base.name=${{ steps.get-info-for-annotations.outputs.base-image-name }}
             org.opencontainers.image.documentation=${{ format('{0}/{1}/blob/{2}/README.md', github.server_url, github.repository, github.sha) }}
             org.opencontainers.image.ref.name=${{ github.ref_name }}
             org.opencontainers.image.source=${{ format('{0}/{1}', github.server_url, github.repository) }}
@@ -155,7 +169,7 @@ jobs:
         id: push
         uses: docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83 # v6.18.0
         env:
-          SOURCE_DATE_EPOCH: ${{ env.GIT_COMMIT_EPOCH }}
+          SOURCE_DATE_EPOCH: ${{ steps.get-info-for-annotations.outputs.git-commit-epoch }}
         with:
           annotations: ${{ steps.metadata.outputs.annotations }}
           cache-from: type=gha
