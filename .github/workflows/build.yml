@@ -124,15 +124,15 @@ jobs:
         shell: pwsh
         run: |
           $gitCommitEpoch = git log -1 --pretty=%ct
-          echo "git-commit-epoch=${gitCommitEpoch}" >> "${env:GITHUB_OUTPUT}"
+          Write-Output "git-commit-epoch=${gitCommitEpoch}" >> "${env:GITHUB_OUTPUT}"
 
           $dockerfileLines = Get-Content -Raw -Path "Dockerfile" | Select-String -Pattern 'FROM\s+(.+)' -AllMatches
           $lastFrom = ($dockerfileLines.Matches | ForEach-Object { $_.Groups[1].Value })[-1]
           if ($lastFrom -match '^(.*?)@sha256:([a-fA-F0-9]+)?(\s.*)?$') {
             $imageName = $Matches[1]
             $digest = $Matches[2]
-            echo "base-image-digest=${digest}" >> ${env:GITHUB_OUTPUT}
-            echo "base-image-name=${imageName}" >> ${env:GITHUB_OUTPUT}
+            Write-Output "base-image-digest=${digest}" >> ${env:GITHUB_OUTPUT}
+            Write-Output "base-image-name=${imageName}" >> ${env:GITHUB_OUTPUT}
           }
 
       - name: Set up Docker Buildx
