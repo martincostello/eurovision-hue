@@ -2,12 +2,13 @@
 // Licensed under the Apache 2.0 license. See the LICENSE file in the project root for full license information.
 
 using System.Buffers;
+using System.Collections.Immutable;
 
 namespace MartinCostello.EurovisionHue;
 
 internal static class Participants
 {
-    private static readonly List<Participant> _participants =
+    private static readonly ImmutableArray<Participant> _participants =
     [
         new("ALB", "Albania", "🇦🇱"),
         new("AND", "Andorra", "🇦🇩"),
