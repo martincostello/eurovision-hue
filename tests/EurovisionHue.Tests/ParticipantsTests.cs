@@ -1,62 +1,82 @@
 ﻿// Copyright (c) Martin Costello, 2025. All rights reserved.
 // Licensed under the Apache 2.0 license. See the LICENSE file in the project root for full license information.
 
+using FsCheck;
+using FsCheck.Fluent;
+
 namespace MartinCostello.EurovisionHue;
 
 public static class ParticipantsTests
 {
+    public static IEnumerable<string> ParticipantNames() =>
+    [
+        "Albania",
+        "Andorra",
+        "Armenia",
+        "Australia",
+        "Austria",
+        "Azerbaijan",
+        "Belarus",
+        "Belgium",
+        "Bosnia and Herzegovina",
+        "Bulgaria",
+        "Croatia",
+        "Cyprus",
+        "Czechia",
+        "Denmark",
+        "Estonia",
+        "Finland",
+        "France",
+        "Georgia",
+        "Germany",
+        "Greece",
+        "Hungary",
+        "Iceland",
+        "Ireland",
+        "Israel",
+        "Italy",
+        "Latvia",
+        "Lithuania",
+        "Luxembourg",
+        "Malta",
+        "Moldova",
+        "Monaco",
+        "Morocco",
+        "Montenegro",
+        "Netherlands",
+        "North Macedonia",
+        "Norway",
+        "Poland",
+        "Portugal",
+        "Romania",
+        "Russia",
+        "San Marino",
+        "Serbia",
+        "Slovakia",
+        "Slovenia",
+        "Spain",
+        "Sweden",
+        "Switzerland",
+        "Turkey",
+        "Turkiye",
+        "Ukraine",
+        "United Kingdom",
+    ];
+
+    public static TheoryData<string> ParticipantTestCases()
+    {
+        var data = new TheoryData<string>();
+
+        foreach (var participant in ParticipantNames())
+        {
+            data.Add(participant);
+        }
+
+        return data;
+    }
+
     [Theory]
-    [InlineData("Albania")]
-    [InlineData("Andorra")]
-    [InlineData("Armenia")]
-    [InlineData("Australia")]
-    [InlineData("Austria")]
-    [InlineData("Azerbaijan")]
-    [InlineData("Belarus")]
-    [InlineData("Belgium")]
-    [InlineData("Bosnia and Herzegovina")]
-    [InlineData("Bulgaria")]
-    [InlineData("Croatia")]
-    [InlineData("Cyprus")]
-    [InlineData("Czechia")]
-    [InlineData("Denmark")]
-    [InlineData("Estonia")]
-    [InlineData("Finland")]
-    [InlineData("France")]
-    [InlineData("Georgia")]
-    [InlineData("Germany")]
-    [InlineData("Greece")]
-    [InlineData("Hungary")]
-    [InlineData("Iceland")]
-    [InlineData("Ireland")]
-    [InlineData("Israel")]
-    [InlineData("Italy")]
-    [InlineData("Latvia")]
-    [InlineData("Lithuania")]
-    [InlineData("Luxembourg")]
-    [InlineData("Malta")]
-    [InlineData("Moldova")]
-    [InlineData("Monaco")]
-    [InlineData("Morocco")]
-    [InlineData("Montenegro")]
-    [InlineData("Netherlands")]
-    [InlineData("North Macedonia")]
-    [InlineData("Norway")]
-    [InlineData("Poland")]
-    [InlineData("Portugal")]
-    [InlineData("Romania")]
-    [InlineData("Russia")]
-    [InlineData("San Marino")]
-    [InlineData("Serbia")]
-    [InlineData("Slovakia")]
-    [InlineData("Slovenia")]
-    [InlineData("Spain")]
-    [InlineData("Sweden")]
-    [InlineData("Switzerland")]
-    [InlineData("Turkey")]
-    [InlineData("Turkiye")]
-    [InlineData("Ukraine")]
-    [InlineData("United Kingdom")]
+    [MemberData(nameof(ParticipantTestCases))]
     public static void TryFind_Can_Load_A_Valid_Participant(string name)
     {
         // Arrange
@@ -96,4 +116,25 @@ public static class ParticipantsTests
         actual.ShouldBeFalse();
         participant.ShouldBeNull();
     }
+
+    [FsCheck.Xunit.Property(MaxTest = 500)]
+    public static void Participant_Colors_Meets_Specification() => Prop.ForAll(
+        Gen.Elements(ParticipantNames()).ToArbitrary(),
+        Gen.Choose(0, 100).ToArbitrary(),
+        (name, count) =>
+        {
+            // Act
+            var actual = Participants.TryFind(name, out var participant);
+
+            // Assert
+            actual.ShouldBeTrue();
+            participant.ShouldNotBeNull();
+
+            // Act
+            var colors = participant.Colors(count);
+
+            // Assert
+            colors.ShouldNotBeNull();
+            colors.ShouldNotBeEmpty();
+        });
 }
