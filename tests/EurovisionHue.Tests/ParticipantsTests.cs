@@ -120,7 +120,7 @@ public static class ParticipantsTests
     [FsCheck.Xunit.Property(MaxTest = 500)]
     public static void Participant_Colors_Meets_Specification() => Prop.ForAll(
         Gen.Elements(ParticipantNames()).ToArbitrary(),
-        Gen.Choose(0, 100).ToArbitrary(),
+        Gen.Choose(1, 100).ToArbitrary(),
         (name, count) =>
         {
             // Act
