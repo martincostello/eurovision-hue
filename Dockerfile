@@ -1,4 +1,4 @@
-FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:10.0.301@sha256:ea8bde36c11b6e7eec2656d0e59101d4462f6bd630730f2c8201ed0572b295d5 AS build
+FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:11.0-preview@sha256:c5aa0a301759a1b07654450e10e3ec78c3d476d0537263ca1ab5850d9f302fca AS build
 ARG TARGETARCH
 ARG SOURCE_DATE_EPOCH
 
@@ -27,7 +27,7 @@ RUN --mount=type=cache,id=nuget,target=/root/.nuget/packages \
     SOURCE_DATE_EPOCH="${SOURCE_DATE_EPOCH:-$(date +%s)}" \
     dotnet publish ./src/EurovisionHue --arch "${TARGETARCH}" --output /app --self-contained
 
-FROM mcr.microsoft.com/dotnet/runtime-deps:10.0.9-resolute@sha256:b1e9476ed44a8bbfa530441d4ff31ea04a4654bc3a3e3ae05f6858fc3e6795d8 AS final
+FROM mcr.microsoft.com/dotnet/runtime-deps:11.0-preview-resolute@sha256:c67c21f4c1acd86ee574e87bb1e0c6ace66d5a90f8bc39fcc98ff7f846bda46d AS final
 
 WORKDIR /app
 COPY --from=build /app .
