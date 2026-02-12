@@ -1,6 +1,7 @@
 <Project>
   <PropertyGroup>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <LangVersion>preview</LangVersion>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     <PackageTags>eurovision,hue</PackageTags>
     <UseArtifactsOutput>true</UseArtifactsOutput>
