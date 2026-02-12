@@ -70,7 +70,7 @@ internal static class Participants
 #pragma warning disable CA1810
     static Participants()
     {
-        _names = new(StringComparer.OrdinalIgnoreCase);
+        _names = [with(StringComparer.OrdinalIgnoreCase)];
 
         foreach (var participant in _participants)
         {
