@@ -30,7 +30,7 @@ internal sealed class EurovisionFeed : IDisposable
 
         var snapshot = options.CurrentValue;
 
-        _feedUrl = snapshot.FeedUrl!;
+        _feedUrl = snapshot.FeedUrl;
         _selector = snapshot.ArticleSelector;
         _frequency = snapshot.FeedFrequency;
 
