@@ -8,8 +8,9 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 RUN apt-get update \
     && apt-get install gpg --yes \
-    && rm --recursive --force /var/lib/apt/lists/* \
-    && curl --silent --show-error --location --retry 5 https://dot.net/v1/dotnet-install.asc --output dotnet-install.asc \
+    && rm --recursive --force /var/lib/apt/lists/*
+
+RUN curl --silent --show-error --location --retry 5 https://dot.net/v1/dotnet-install.asc --output dotnet-install.asc \
     && gpg --import dotnet-install.asc \
     && rm dotnet-install.asc
 
