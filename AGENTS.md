@@ -16,9 +16,9 @@ This file provides guidance to coding agents when working with code in this repo
 
 - This repository contains a .NET console app in `src\EurovisionHue` and a single xUnit v3 test project in `tests\EurovisionHue.Tests`.
 - `Program.cs` is intentionally thin: it handles the special `--install-deps` Playwright bootstrap path, wires Ctrl+C to a cancellation token, and then calls `App.RunAsync()`.
-- `App.RunAsync()` is the orchestration entry point. It builds configuration from `appsettings.json`, a persisted user settings file under `%LOCALAPPDATA%\$USER\EurovisionHue\usersettings.json`, environment variables, and user secrets, then builds the DI container via `ServiceCollectionExtensions.AddEurovisionHue()`.
+- `App.RunAsync()` is the orchestration entry point. It builds configuration from `appsettings.json`, a persisted user settings file under `%LOCALAPPDATA%\MartinCostello\EurovisionHue\usersettings.json`, environment variables, and user secrets, then builds the DI container via `ServiceCollectionExtensions.AddEurovisionHue()`.
 - The runtime flow is:
-  1. `LightsClientFactory` discovers Hue bridges, prompts for bridge authorization if no token is stored, and persists `HueToken` plus selected `LightIds`.
+  1. `LightsClientFactory` discovers Hue bridges, prompts for bridge authorization if no token is stored, and persists the `HueToken`. `App.RunAsync()` then prompts/filters available lights, selects the desired ones, and persists the resulting `LightIds` via `AppOptions.SaveAsync()`.
   2. `EurovisionFeed` launches Playwright Chromium, loads the configured live feed, polls it on the configured interval, and yields participants as an `IAsyncEnumerable<Participant>`.
   3. `Participants.TryFind()` maps feed text to a Eurovision participant using the precomputed name lookup in `Participants.cs`.
   4. `Participant.Colors()` loads embedded flag PNG resources from `Flags\*.png` and extracts dominant colors with ImageSharp.
