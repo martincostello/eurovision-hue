@@ -1,4 +1,4 @@
-FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:10.0.202@sha256:adc02be8b87957d07208a4a3e51775935b33bad3317de8c45b1e67357b4c073b AS build
+FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:10.0.203@sha256:8a90a473da5205a16979de99d2fc20975e922c68304f5c79d564e666dc3982fc AS build
 ARG TARGETARCH
 
 COPY . /source
@@ -25,7 +25,7 @@ RUN curl --silent --show-error --location --retry 5 https://dot.net/v1/dotnet-in
 RUN --mount=type=cache,id=nuget,target=/root/.nuget/packages \
     dotnet publish ./src/EurovisionHue --arch "${TARGETARCH}" --output /app --self-contained
 
-FROM mcr.microsoft.com/dotnet/runtime-deps:10.0.6-noble@sha256:3e7d95f338b6a476a18689bc873c9db552b5aa4595ddaff878ad38d4926f3b74 AS final
+FROM mcr.microsoft.com/dotnet/runtime-deps:10.0.7-noble@sha256:962ef681468320cc5ef25fa18259cf3200247cec2ee96c2574174d4824272151 AS final
 
 WORKDIR /app
 COPY --from=build /app .
