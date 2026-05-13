@@ -66,7 +66,13 @@ internal sealed record Participant(
                 }
             }
 
+            // Remove any colors that represent less than 1% of the total
+            // pixels from compression artifacts or small details (like a crest).
+            var totalPixels = histogram.Values.Sum();
+            var threshold = totalPixels * 0.01;
+
             _colors = [.. histogram
+                .Where((p) => p.Value >= threshold)
                 .OrderByDescending((p) => p.Value)
                 .Take(count)
                 .Select((p) => p.Key)];
