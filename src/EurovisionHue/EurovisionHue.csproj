@@ -25,6 +25,7 @@
     <PackageReference Include="Microsoft.Playwright" />
     <PackageReference Include="Polly.Extensions" />
     <PackageReference Include="SkiaSharp" />
+    <PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" />
     <PackageReference Include="Spectre.Console" />
   </ItemGroup>
   <ItemGroup>
