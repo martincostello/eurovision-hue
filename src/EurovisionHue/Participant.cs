@@ -1,8 +1,7 @@
 ﻿// Copyright (c) Martin Costello, 2025. All rights reserved.
 // Licensed under the Apache 2.0 license. See the LICENSE file in the project root for full license information.
 
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.PixelFormats;
+using SkiaSharp;
 
 namespace MartinCostello.EurovisionHue;
 
@@ -39,8 +38,8 @@ internal sealed record Participant(
         {
             var type = typeof(Participant);
 
-            using var stream = type.Assembly.GetManifestResourceStream($"{type.Namespace}.Flags.{Id}.png")!;
-            using var image = Image.Load<Rgba32>(stream);
+            using var stream = type.Assembly.GetManifestResourceStream($"{type.Namespace}.Flags.{Id}.png");
+            using var image = SKBitmap.Decode(stream);
 
             var histogram = new Dictionary<Color, int>();
 
@@ -48,15 +47,15 @@ internal sealed record Participant(
             {
                 for (int x = 0; x < image.Width; x++)
                 {
-                    var pixel = image[x, y];
+                    var pixel = image.GetPixel(x, y);
 
-                    if (pixel.A < 128 || (pixel.R + pixel.G + pixel.B == 0))
+                    if (pixel.Alpha < 128 || (pixel.Red + pixel.Green + pixel.Blue == 0))
                     {
                         // Skip mostly transparent pixels and black pixels
                         continue;
                     }
 
-                    var color = new Color(pixel.R, pixel.G, pixel.B);
+                    var color = new Color(pixel.Red, pixel.Green, pixel.Blue);
 
                     if (!histogram.TryGetValue(color, out var value))
                     {

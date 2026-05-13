@@ -24,7 +24,7 @@
     <PackageReference Include="Microsoft.Extensions.Options" />
     <PackageReference Include="Microsoft.Playwright" />
     <PackageReference Include="Polly.Extensions" />
-    <PackageReference Include="SixLabors.ImageSharp" />
+    <PackageReference Include="SkiaSharp" />
     <PackageReference Include="Spectre.Console" />
   </ItemGroup>
   <ItemGroup>
