@@ -3,8 +3,20 @@
 
 namespace MartinCostello.EurovisionHue;
 
-internal sealed record Color(int R, int G, int B)
+/// <summary>
+/// A record representing a color.
+/// </summary>
+/// <param name="R">The red color value.</param>
+/// <param name="G">The green color value.</param>
+/// <param name="B">The blue color value.</param>
+public sealed record Color(int R, int G, int B)
 {
+    /// <summary>
+    /// Returns the X-Y value to use for the color for Hue lights.
+    /// </summary>
+    /// <returns>
+    /// The X and Y values for the color.
+    /// </returns>
     public (double X, double Y) ToXY()
     {
         // See https://gist.github.com/popcorn245/30afa0f98eea1c2fd34d
