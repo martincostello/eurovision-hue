@@ -77,6 +77,10 @@ docker run --interactive --tty --rm --env TZ=Europe/London --mount type=volume,s
 
 The `eurovision-hue` volume is used to persist the configuration of the application between runs.
 
+> [!TIP]
+> You can change the timezone used by the application by changing the value of the `TZ` environment
+> variable to a valid [tz database time zone][timezones], for example `Europe/Vienna`.
+
 ### Demo
 
 > [!NOTE]
@@ -150,3 +154,4 @@ This project is licensed under the [Apache 2.0][license] license.
 [repo]: https://github.com/martincostello/eurovision-hue "This project on GitHub.com"
 [scorecard-badge]: https://api.securityscorecards.dev/projects/github.com/martincostello/eurovision-hue/badge
 [scorecard-report]: https://securityscorecards.dev/viewer/?uri=github.com/martincostello/eurovision-hue "OpenSSF Scorecard for this project"
+[timezones]: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones "List of tz database time zones on Wikipedia"
