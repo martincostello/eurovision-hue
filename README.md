@@ -33,7 +33,7 @@ following settings in [`appsettings.json`][appsettings]:
 
 ```json
 {
-  "FeedUrl": "https://www.bbc.co.uk/news/live/c74n9n5l1nxt",
+  "FeedUrl": "https://www.bbc.co.uk/news/live/cm2p9xmmpylt",
   "ArticleSelector": "article[data-testid='content-post']"
 }
 ```
@@ -46,7 +46,7 @@ following settings in [`appsettings.json`][appsettings]:
 These values can also be set using environment variables of the same names, for example:
 
 ```sh
-export FeedUrl="https://www.bbc.co.uk/news/live/c74n9n5l1nxt"
+export FeedUrl="https://www.bbc.co.uk/news/live/cm2p9xmmpylt"
 export ArticleSelector="article[data-testid='content-post']"
 ```
 
@@ -72,7 +72,7 @@ docker pull ghcr.io/martincostello/eurovision-hue:latest
 Finally, run the application using the following command:
 
 ```terminal
-docker run --interactive --tty --rm --mount type=volume,src=eurovision-hue,dst=/app/MartinCostello/EurovisionHue ghcr.io/martincostello/eurovision-hue:latest
+docker run --interactive --tty --rm --env TZ=Europe/London --mount type=volume,src=eurovision-hue,dst=/app/MartinCostello/EurovisionHue ghcr.io/martincostello/eurovision-hue:latest
 ```
 
 The `eurovision-hue` volume is used to persist the configuration of the application between runs.
@@ -86,7 +86,7 @@ The `eurovision-hue` volume is used to persist the configuration of the applicat
 To run a demo of the application using Docker, you can use the following command:
 
 ```terminal
-docker run --env ArticleSelector="td:nth-child(2)" --env FeedUrl="file:///app/demo.html" --interactive --tty --rm --mount type=volume,src=eurovision-hue,dst=/app/MartinCostello/EurovisionHue --mount type=bind,source=./demo.html,target=/app/demo.html ghcr.io/martincostello/eurovision-hue:latest
+docker run --env ArticleSelector="td:nth-child(2)" --env FeedUrl="file:///app/demo.html" --env TZ=Europe/London --interactive --tty --rm --mount type=volume,src=eurovision-hue,dst=/app/MartinCostello/EurovisionHue --mount type=bind,source=./demo.html,target=/app/demo.html ghcr.io/martincostello/eurovision-hue:latest
 ```
 
 This command will run the application in a mode where your selected Hue lights will randomly change
