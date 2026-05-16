@@ -154,4 +154,4 @@ This project is licensed under the [Apache 2.0][license] license.
 [repo]: https://github.com/martincostello/eurovision-hue "This project on GitHub.com"
 [scorecard-badge]: https://api.securityscorecards.dev/projects/github.com/martincostello/eurovision-hue/badge
 [scorecard-report]: https://securityscorecards.dev/viewer/?uri=github.com/martincostello/eurovision-hue "OpenSSF Scorecard for this project"
-[timezones]: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones "List of tz database time zones on Wikipedia"
+[timezones]: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List "List of tz database time zones on Wikipedia"
