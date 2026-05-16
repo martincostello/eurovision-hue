@@ -33,7 +33,7 @@ following settings in [`appsettings.json`][appsettings]:
 
 ```json
 {
-  "FeedUrl": "https://www.bbc.co.uk/news/live/c74n9n5l1nxt",
+  "FeedUrl": "https://www.bbc.co.uk/news/live/cm2p9xmmpylt",
   "ArticleSelector": "article[data-testid='content-post']"
 }
 ```
@@ -46,7 +46,7 @@ following settings in [`appsettings.json`][appsettings]:
 These values can also be set using environment variables of the same names, for example:
 
 ```sh
-export FeedUrl="https://www.bbc.co.uk/news/live/c74n9n5l1nxt"
+export FeedUrl="https://www.bbc.co.uk/news/live/cm2p9xmmpylt"
 export ArticleSelector="article[data-testid='content-post']"
 ```
 
@@ -72,10 +72,14 @@ docker pull ghcr.io/martincostello/eurovision-hue:latest
 Finally, run the application using the following command:
 
 ```terminal
-docker run --interactive --tty --rm --mount type=volume,src=eurovision-hue,dst=/app/MartinCostello/EurovisionHue ghcr.io/martincostello/eurovision-hue:latest
+docker run --interactive --tty --rm --env TZ=Europe/London --mount type=volume,src=eurovision-hue,dst=/app/MartinCostello/EurovisionHue ghcr.io/martincostello/eurovision-hue:latest
 ```
 
 The `eurovision-hue` volume is used to persist the configuration of the application between runs.
+
+> [!TIP]
+> You can change the timezone used by the application by changing the value of the `TZ` environment
+> variable to a valid [tz database time zone][timezones], for example `Europe/Vienna`.
 
 ### Demo
 
@@ -86,7 +90,7 @@ The `eurovision-hue` volume is used to persist the configuration of the applicat
 To run a demo of the application using Docker, you can use the following command:
 
 ```terminal
-docker run --env ArticleSelector="td:nth-child(2)" --env FeedUrl="file:///app/demo.html" --interactive --tty --rm --mount type=volume,src=eurovision-hue,dst=/app/MartinCostello/EurovisionHue --mount type=bind,source=./demo.html,target=/app/demo.html ghcr.io/martincostello/eurovision-hue:latest
+docker run --env ArticleSelector="td:nth-child(2)" --env FeedUrl="file:///app/demo.html" --env TZ=Europe/London --interactive --tty --rm --mount type=volume,src=eurovision-hue,dst=/app/MartinCostello/EurovisionHue --mount type=bind,source=./demo.html,target=/app/demo.html ghcr.io/martincostello/eurovision-hue:latest
 ```
 
 This command will run the application in a mode where your selected Hue lights will randomly change
@@ -150,3 +154,4 @@ This project is licensed under the [Apache 2.0][license] license.
 [repo]: https://github.com/martincostello/eurovision-hue "This project on GitHub.com"
 [scorecard-badge]: https://api.securityscorecards.dev/projects/github.com/martincostello/eurovision-hue/badge
 [scorecard-report]: https://securityscorecards.dev/viewer/?uri=github.com/martincostello/eurovision-hue "OpenSSF Scorecard for this project"
+[timezones]: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List "List of tz database time zones on Wikipedia"
