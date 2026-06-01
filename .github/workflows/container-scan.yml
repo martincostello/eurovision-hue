@@ -21,6 +21,7 @@ jobs:
       cancel-in-progress: false
 
     permissions:
+      actions: write
       contents: read
       security-events: write
 
@@ -128,5 +129,5 @@ jobs:
           github.event_name == 'schedule' &&
           steps.check-for-vulnerabilities.outputs.has-vulnerabilities == 'true'
         env:
-          GH_TOKEN: ${{ secrets.COSTELLOBOT_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: gh workflow run build.yml

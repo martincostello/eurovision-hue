@@ -85,7 +85,6 @@ jobs:
       uses: codecov/codecov-action@e79a6962e0d4c0c17b229090214935d2e33f8354 # v6.0.1
       with:
         flags: ${{ matrix.os-name }}
-        token: ${{ secrets.CODECOV_TOKEN }}
 
     - name: Upload test results to Codecov
       uses: codecov/codecov-action@e79a6962e0d4c0c17b229090214935d2e33f8354 # v6.0.1
@@ -93,7 +92,6 @@ jobs:
       with:
         flags: ${{ matrix.os-name }}
         report_type: test_results
-        token: ${{ secrets.CODECOV_TOKEN }}
 
     - name: Build container image
       if: runner.os == 'Linux'
