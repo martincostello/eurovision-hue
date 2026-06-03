@@ -15,13 +15,27 @@ permissions: {}
 
 jobs:
   bump-version:
-    runs-on: [ ubuntu-24.04 ]
+    runs-on: ubuntu-24.04
+    if: github.event.repository.fork == false
 
     concurrency:
       group: '${{ github.workflow }}-bump'
       cancel-in-progress: false
 
+    environment:
+      name: write
+      deployment: false
+
+    permissions:
+      id-token: write
+
     steps:
+
+      - name: Get GitHub token
+        id: get-github-token
+        uses: martincostello/github-automation/actions/get-github-token@d7d5bbb507c1f4b8fe3aff4f0199f9e24fff2ba5 # get-github-token/v4.1.1
+        with:
+          profile-name: write
 
       - name: Checkout code
         uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
@@ -29,7 +43,7 @@ jobs:
           filter: 'tree:0'
           persist-credentials: true # zizmor: ignore[artipacked] Needed to push commits
           show-progress: false
-          token: ${{ secrets.COSTELLOBOT_TOKEN }}
+          token: ${{ steps.get-github-token.outputs.token }}
 
       - name: Bump version
         id: bump-version
@@ -116,7 +130,7 @@ jobs:
           HEAD_BRANCH: ${{ steps.push-changes.outputs.branch-name }}
           NEXT_VERSION: ${{ steps.push-changes.outputs.version }}
         with:
-          github-token: ${{ secrets.COSTELLOBOT_TOKEN }}
+          github-token: ${{ steps.get-github-token.outputs.token }}
           script: |
             const nextVersion = process.env.NEXT_VERSION;
             const { repo, owner } = context.repo;
@@ -128,7 +142,7 @@ jobs:
               repo,
               head: process.env.HEAD_BRANCH,
               base: process.env.BASE_BRANCH,
-              draft: true,
+              draft: false,
               body: [
                 `Bump version to \`${nextVersion}\` for the next release.`,
                 '',
@@ -168,12 +182,15 @@ jobs:
             }
 
   close-milestone:
-    runs-on: [ ubuntu-24.04 ]
+    runs-on: ubuntu-24.04
     if: github.event_name == 'release'
 
     concurrency:
       group: '${{ github.workflow }}-milestone'
       cancel-in-progress: false
+
+    permissions:
+      issues: write
 
     steps:
 
@@ -183,7 +200,7 @@ jobs:
           RELEASE_DATE: ${{ github.event.release.published_at }}
           RELEASE_VERSION: ${{ github.event.release.tag_name }}
         with:
-          github-token: ${{ secrets.COSTELLOBOT_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const { repo, owner } = context.repo;
 
