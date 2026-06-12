@@ -40,9 +40,9 @@ jobs:
         id: configure
         shell: pwsh
         env:
-          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+          IMAGE_LABEL: 'edge'
         run: |
-          $image = "ghcr.io/${env:GITHUB_REPOSITORY}:${env:DEFAULT_BRANCH}"
+          $image = "ghcr.io/${env:GITHUB_REPOSITORY}:${env:IMAGE_LABEL}"
           "container-image=${image}" >> ${env:GITHUB_OUTPUT}
 
       - name: Run Trivy (SARIF)
