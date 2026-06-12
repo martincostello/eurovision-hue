@@ -110,6 +110,10 @@ jobs:
       IMAGE_NAME: ${{ github.repository }}
       REGISTRY: ghcr.io
 
+    environment:
+      name: publish
+      url: ${{ format('{0}/{1}/pkgs/container/{2}', github.server_url, github.repository, 'eurovision-hue') }}
+
     permissions:
       attestations: write
       contents: read
@@ -193,7 +197,7 @@ jobs:
           subject-name: ${{ format('{0}/{1}', env.REGISTRY, env.IMAGE_NAME) }}
           subject-digest: ${{ steps.push.outputs.digest }}
 
-      - name: Verify attestation
+      - name: Verify attestations
         env:
           CONTAINER_IMAGE_DIGEST: ${{ format('oci://{0}/{1}@{2}', env.REGISTRY, env.IMAGE_NAME, steps.push.outputs.digest) }}
           CONTAINER_IMAGE_LABEL: ${{ format('oci://{0}/{1}:{2}', env.REGISTRY, env.IMAGE_NAME, 'edge') }}
@@ -216,7 +220,7 @@ jobs:
           TAGS: ${{ steps.metadata.outputs.tags }}
         run: echo "${TAGS}" | xargs -I {} cosign sign --yes "{}@${DIGEST}" --annotations "ref=${GITHUB_SHA}" --annotations "repo=${GITHUB_REPOSITORY}" --annotations "workflow=${GITHUB_WORKFLOW}"
 
-      - name: Verify container image signature
+      - name: Verify container image signatures
         shell: bash
         env:
           CERTIFICATE_IDENTITY: ${{ format('{0}/{1}', github.server_url, github.workflow_ref) }}
