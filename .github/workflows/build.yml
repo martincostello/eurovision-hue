@@ -104,7 +104,7 @@ jobs:
     - name: Build container image
       if: runner.os == 'Linux'
       shell: pwsh
-      run: docker build .
+      run: docker build --build-arg SOURCE_DATE_EPOCH=${env:SOURCE_DATE_EPOCH} .
       env:
         SOURCE_DATE_EPOCH: ${{ steps.get-commit-timestamp.outputs.epoch }}
 
