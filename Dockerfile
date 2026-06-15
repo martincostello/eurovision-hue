@@ -1,5 +1,6 @@
 FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:10.0.301@sha256:548d93f8a18a1acbe6cc127bc4f47281430d34a9e35c18afa80a8d6741c2adc3 AS build
 ARG TARGETARCH
+ARG SOURCE_DATE_EPOCH
 
 COPY . /source
 WORKDIR /source
@@ -23,7 +24,7 @@ RUN curl --silent --show-error --location --retry 5 https://dot.net/v1/dotnet-in
     && rm dotnet-install.sig
 
 RUN --mount=type=cache,id=nuget,target=/root/.nuget/packages \
-    dotnet publish ./src/EurovisionHue --arch "${TARGETARCH}" --output /app --self-contained
+    "SOURCE_DATE_EPOCH=${SOURCE_DATE_EPOCH:-$(date +%s)}" dotnet publish ./src/EurovisionHue --arch "${TARGETARCH}" --output /app --self-contained
 
 FROM mcr.microsoft.com/dotnet/runtime-deps:10.0.9-noble@sha256:c7ee658e8fb276eb545cc67e2c37085dd7b902c0055d4aa35af213d1c18c6e6b AS final
 
