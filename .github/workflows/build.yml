@@ -208,6 +208,7 @@ jobs:
           subject-digest: ${{ steps.push.outputs.digest }}
 
       - name: Verify attestations
+        shell: bash
         env:
           CONTAINER_IMAGE_DIGEST: ${{ format('oci://{0}/{1}@{2}', env.REGISTRY, env.IMAGE_NAME, steps.push.outputs.digest) }}
           CONTAINER_IMAGE_LABEL: ${{ format('oci://{0}/{1}:{2}', env.REGISTRY, env.IMAGE_NAME, github.ref_name == github.event.repository.default_branch && 'edge' || 'latest') }}
@@ -234,6 +235,7 @@ jobs:
           cosign-release: ${{ env.COSIGN_VERSION }}
 
       - name: Sign container images
+        shell: bash
         env:
           DIGEST: ${{ steps.push.outputs.digest }}
           TAGS: ${{ steps.metadata.outputs.tags }}
