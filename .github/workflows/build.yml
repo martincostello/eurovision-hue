@@ -201,7 +201,7 @@ jobs:
           tags: ${{ steps.metadata.outputs.tags }}
 
       - name: Generate artifact attestation
-        uses: actions/attest@59d89421af93a897026c735860bf21b6eb4f7b26 # v4.1.0
+        uses: actions/attest@a1948c3f048ba23858d222213b7c278aabede763 # v4.1.1
         with:
           push-to-registry: true
           subject-name: ${{ format('{0}/{1}', env.REGISTRY, env.IMAGE_NAME) }}
