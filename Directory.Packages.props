@@ -23,8 +23,8 @@
     <PackageVersion Include="Polly.Extensions" Version="8.7.0" />
     <PackageVersion Include="ReportGenerator" Version="5.5.10" />
     <PackageVersion Include="Shouldly" Version="4.3.0" />
-    <PackageVersion Include="SkiaSharp" Version="4.150.0" />
-    <PackageVersion Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="4.150.0" />
+    <PackageVersion Include="SkiaSharp" Version="4.150.1" />
+    <PackageVersion Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="4.150.1" />
     <PackageVersion Include="Spectre.Console" Version="0.57.2" />
     <PackageVersion Include="Spectre.Console.Testing" Version="0.57.2" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
