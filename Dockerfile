@@ -27,7 +27,7 @@ RUN --mount=type=cache,id=nuget,target=/root/.nuget/packages \
     SOURCE_DATE_EPOCH="${SOURCE_DATE_EPOCH:-$(date +%s)}" \
     dotnet publish ./src/EurovisionHue --arch "${TARGETARCH}" --output /app --self-contained
 
-FROM mcr.microsoft.com/dotnet/runtime-deps:10.0.10-resolute@sha256:22e74496efc7f3480fd7bafc1bb36a314814e3e6dbddc5030feaf6dab18817c4 AS final
+FROM mcr.microsoft.com/dotnet/runtime-deps:10.0.10-resolute@sha256:6bfdb2247d023457e091eafd113e74885b8fa08673165183ccb5a64124135f86 AS final
 
 WORKDIR /app
 COPY --from=build /app .
