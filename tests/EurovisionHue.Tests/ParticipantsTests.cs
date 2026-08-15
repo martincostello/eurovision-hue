@@ -120,7 +120,7 @@ public static class ParticipantsTests
     [Fact]
     public static void Participant_Colors_Meets_Specification() =>
         Check.One(
-            Config.QuickThrowOnFailure with { MaxTest = 500 },
+            Config.QuickThrowOnFailure.WithMaxTest(500),
             Prop.ForAll(
                 Gen.Elements(ParticipantTestCases().AsEnumerable()).Select((p) => p.Data.Item1).ToArbitrary(),
                 Gen.Choose(1, 100).ToArbitrary(),
