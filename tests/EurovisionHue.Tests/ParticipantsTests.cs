@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Martin Costello, 2025. All rights reserved.
 // Licensed under the Apache 2.0 license. See the LICENSE file in the project root for full license information.
 
+using FsCheck.Fluent;
+
 namespace MartinCostello.EurovisionHue;
 
 public static class ParticipantsTests
@@ -114,24 +116,27 @@ public static class ParticipantsTests
         participant.ShouldBeNull();
     }
 
-    [Theory]
-    [MemberData(nameof(ParticipantTestCases))]
-    public static void Participant_Colors_Meets_Specification(string name, IReadOnlyList<Color> _)
-    {
-        // Act
-        var actual = Participants.TryFind(name, out var participant);
+    [Fact]
+    public static void Participant_Colors_Meets_Specification() =>
+        Check.One(
+            Config.QuickThrowOnFailure with { MaxTest = 500 },
+            Prop.ForAll(
+                Gen.Elements(ParticipantTestCases().AsEnumerable()).Select((p) => p.Data.Item1).ToArbitrary(),
+                Gen.Choose(1, 100).ToArbitrary(),
+                (name, count) =>
+                {
+                    // Act
+                    var actual = Participants.TryFind(name, out var participant);
 
-        // Assert
-        actual.ShouldBeTrue();
-        participant.ShouldNotBeNull();
+                    // Assert
+                    actual.ShouldBeTrue();
+                    participant.ShouldNotBeNull();
 
-        // Act and assert for a representative range of color counts
-        foreach (var count in new[] { 1, 10, 100 })
-        {
-            var colors = participant.Colors(count);
+                    // Act
+                    var colors = participant.Colors(count);
 
-            colors.ShouldNotBeNull();
-            colors.ShouldNotBeEmpty();
-        }
-    }
+                    // Assert
+                    colors.ShouldNotBeNull();
+                    colors.ShouldNotBeEmpty();
+                }));
 }
