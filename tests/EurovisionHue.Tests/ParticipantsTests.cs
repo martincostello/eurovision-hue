@@ -125,11 +125,13 @@ public static class ParticipantsTests
         actual.ShouldBeTrue();
         participant.ShouldNotBeNull();
 
-        // Act
-        var colors = participant.Colors(1);
+        // Act and assert for a representative range of color counts
+        foreach (var count in new[] { 1, 10, 100 })
+        {
+            var colors = participant.Colors(count);
 
-        // Assert
-        colors.ShouldNotBeNull();
-        colors.ShouldNotBeEmpty();
+            colors.ShouldNotBeNull();
+            colors.ShouldNotBeEmpty();
+        }
     }
 }
