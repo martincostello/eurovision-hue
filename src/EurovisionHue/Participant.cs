@@ -13,7 +13,7 @@ internal sealed record Participant(
 {
     public static readonly Participant Unknown = new("EUR", "Unknown", "🇪🇺");
 
-    private List<Color>? _colors;
+    private IReadOnlyList<Color>? _colors;
 
     public IReadOnlyList<string> Names { get; } = [Name, .. AlternateNames ?? []];
 
@@ -74,11 +74,10 @@ internal sealed record Participant(
             _colors = [.. histogram
                 .Where((p) => p.Value >= threshold)
                 .OrderByDescending((p) => p.Value)
-                .Take(count)
                 .Select((p) => p.Key)];
         }
 
-        return _colors;
+        return count >= _colors.Count ? _colors : [.. _colors.Take(count)];
     }
 
     public override int GetHashCode()
