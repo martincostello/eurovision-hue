@@ -11,24 +11,22 @@
     <ProjectReference Include="..\..\src\EurovisionHue\EurovisionHue.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="coverlet.msbuild" />
     <PackageReference Include="FsCheck.Xunit.v3" />
-    <PackageReference Include="GitHubActionsTestLogger" NoWarn="RT0003" />
-    <PackageReference Include="JunitXml.TestLogger" NoWarn="RT0003" />
+    <PackageReference Include="GitHubActionsTestLogger" />
     <PackageReference Include="JustEat.HttpClientInterception" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
-    <PackageReference Include="ReportGenerator" />
+    <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" />
     <PackageReference Include="Shouldly" />
     <PackageReference Include="Spectre.Console.Testing" />
     <PackageReference Include="xunit.runner.visualstudio" />
-    <PackageReference Include="xunit.v3.mtp-off" />
+    <PackageReference Include="xunit.v3.mtp-v2" />
   </ItemGroup>
   <ItemGroup>
     <AssemblyMetadata Include="SolutionRoot" Value="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)\..\..'))" />
-    <CoverletExclude Include="$([MSBuild]::Escape('[Spectre.Console*]*'))" />
   </ItemGroup>
   <PropertyGroup>
     <CollectCoverage>true</CollectCoverage>
+    <CoverageRunSettings>$(MSBuildThisFileDirectory)tests.runsettings</CoverageRunSettings>
     <Threshold>85,75,90</Threshold>
   </PropertyGroup>
 </Project>
