@@ -5,8 +5,9 @@ This file provides guidance to coding agents when working with code in this repo
 ## Build, test, and lint commands
 
 - From the repository root, use `./build.ps1` as the authoritative full validation command. It bootstraps the required .NET SDK from `global.json` if needed, publishes `src\EurovisionHue`, and runs the full test suite unless `-SkipTests` is passed.
+- Tests run on Microsoft Testing Platform (configured by the `test.runner` setting in `global.json`) using `xunit.v3.mtp-v2`. Code coverage is collected with `Microsoft.Testing.Extensions.CodeCoverage` (settings in `tests\EurovisionHue.Tests\tests.runsettings`), and `build.ps1` generates coverage reports with the `reportgenerator` .NET local tool, so run `dotnet tool restore` first.
 - Run the full test project directly with `dotnet test .\tests\EurovisionHue.Tests\EurovisionHue.Tests.csproj --configuration Release`.
-- Run a single test with a filter and disable coverage collection, otherwise the test project-wide 80% coverage threshold will fail targeted runs: `dotnet test .\tests\EurovisionHue.Tests\EurovisionHue.Tests.csproj --configuration Release --filter "FullyQualifiedName~MartinCostello.EurovisionHue.AppTests.Application_Runs_Successfully" /p:CollectCoverage=false`
+- Run a single test with an xunit v3 filter option such as `--filter-method`, and disable coverage collection for faster targeted runs: `dotnet test .\tests\EurovisionHue.Tests\EurovisionHue.Tests.csproj --configuration Release --filter-method "MartinCostello.EurovisionHue.AppTests.Application_Runs_Successfully" -p:CollectCoverage=false`
 - There is no single repo-local lint script. The CI lint workflow is the source of truth:
   - PowerShell scripts: `Invoke-ScriptAnalyzer -Path $PWD -Recurse -ReportSummary -Settings @{ IncludeDefaultRules = $true; Severity = @('Error', 'Warning') }`
   - Markdown: `markdownlint-cli2 "**/*.md"` with `.markdownlint.json`
@@ -35,7 +36,7 @@ This file provides guidance to coding agents when working with code in this repo
 - Keep DI changes centralized in `ServiceCollectionExtensions.AddEurovisionHue()` unless a test is intentionally overriding registrations.
 - Persist only user-specific bridge state through `AppOptions.SaveAsync()`. That file stores `HueToken` and `LightIds`; feed settings come from app settings, environment variables, user secrets, or the remote gist layer.
 - When changing feed detection behavior, keep the optimized participant lookup approach in `Participants.cs` and remember that alternate country names are part of the supported matching behavior.
-- When changing tests, remember that the test project enables coverage by default with an 80% threshold. Targeted `dotnet test` runs need `/p:CollectCoverage=false` unless the selected subset still satisfies coverage.
+- When changing tests, remember that the test project enables coverage by default and writes Cobertura output to `artifacts\coverage\EurovisionHue.Tests`. Pass `-p:CollectCoverage=false` to targeted `dotnet test` runs to skip coverage collection.
 
 ## General guidelines
 
