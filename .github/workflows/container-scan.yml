@@ -20,6 +20,10 @@ jobs:
       group: ${{ github.workflow }}
       cancel-in-progress: false
 
+    environment:
+      name: container-scan
+      deployment: false
+
     outputs:
       has-vulnerabilities: ${{ steps.check-for-vulnerabilities.outputs.has-vulnerabilities }}
 
