@@ -71,10 +71,12 @@ internal sealed record Participant(
             var totalPixels = histogram.Values.Sum();
             var threshold = totalPixels * 0.01;
 
-            _colors = [.. histogram
+            var colors = histogram
                 .Where((p) => p.Value >= threshold)
                 .OrderByDescending((p) => p.Value)
-                .Select((p) => p.Key)];
+                .Select((p) => p.Key);
+
+            _colors = [.. colors];
         }
 
         return count >= _colors.Count ? _colors : [.. _colors.Take(count)];
