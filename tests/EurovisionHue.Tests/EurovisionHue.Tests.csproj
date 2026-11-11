@@ -14,6 +14,7 @@
     <PackageReference Include="FsCheck.Xunit.v3" />
     <PackageReference Include="GitHubActionsTestLogger" />
     <PackageReference Include="JustEat.HttpClientInterception" />
+    <PackageReference Include="Microsoft.AspNetCore.WebUtilities" />
     <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" />
     <PackageReference Include="Shouldly" />
     <PackageReference Include="Spectre.Console.Testing" />
