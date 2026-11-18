@@ -32,6 +32,9 @@ FROM mcr.microsoft.com/dotnet/runtime-deps:11.0.0-resolute@sha256:6d3e208d8f5ba5
 WORKDIR /app
 COPY --from=build /app .
 
-RUN ./EurovisionHue --install-deps
+RUN apt-get update \
+    && apt-get install --no-install-recommends --yes libatomic1 \
+    && rm --recursive --force /var/lib/apt/lists/* \
+    && ./EurovisionHue --install-deps
 
 ENTRYPOINT ["./EurovisionHue"]
